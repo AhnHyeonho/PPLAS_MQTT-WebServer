@@ -50,12 +50,12 @@ public class AccountDAO {
 		
 		try {
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, account.getAccountID());
-			pstmt.setString(2, account.getAccountPassword());
-			pstmt.setString(3, account.getAccountName());
-			pstmt.setString(4, account.getAccountResidentID());
-			pstmt.setString(5, account.getAccountAuthority());
-			pstmt.setString(6, account.getAccountPhone());
+			pstmt.setString(1, account.getAccountID());	// 계정 ID
+			pstmt.setString(2, account.getAccountPassword()); // 계정 비밀번호
+			pstmt.setString(3, account.getAccountName());	// 이름
+			pstmt.setString(4, account.getAccountResidentID());	// 주민등록번호
+			pstmt.setString(5, account.getAccountAuthority());	// 의료진, 환자, 관리자
+			pstmt.setString(6, account.getAccountPhone());	// 전화번호
 			return pstmt.executeUpdate();		
 		} catch(Exception e) {
 			e.printStackTrace();
