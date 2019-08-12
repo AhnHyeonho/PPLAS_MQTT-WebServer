@@ -164,7 +164,7 @@ public class Subscriber implements MqttCallback {
 		
 		 AccountDAO acDAO = new AccountDAO(); 
 		 
-		 Account account = acDAO.getInfo(); // 아직 안만들었는데 정보 읽어오는 메소드
+		 Account account = acDAO.getInfo(topic); // 아직 안만들었는데 정보 읽어오는 메소드
 		  
 		  
 		  System.out.println("Mqtt topic : " + topic); System.out.println("Mqtt msg : " + message.toString());

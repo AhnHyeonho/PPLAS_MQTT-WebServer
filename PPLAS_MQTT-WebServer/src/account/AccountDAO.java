@@ -66,11 +66,12 @@ public class AccountDAO {
 		return -1;	// 데이터베이스 오류
 	}
 	
-	public Account getInfo() {
-		String SQL = "SELECT * FROM ACCOUNT ORDER BY accountID";
+	public Account getInfo(String id) {
+		String SQL = "SELECT * FROM ACCOUNT WHERE accountID = ?";
 		Account account = new Account();
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
