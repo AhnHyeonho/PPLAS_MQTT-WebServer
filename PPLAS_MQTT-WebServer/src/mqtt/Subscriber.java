@@ -1,5 +1,7 @@
 package mqtt;
 
+import java.util.ArrayList;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -12,6 +14,9 @@ import account.Account;
 import account.AccountDAO;
 import location.Location;
 import patient.Patient;
+import distance.LocationDistance;
+import hospital.Hospital;
+import hospital.HospitalDAO;
 
 /**
  * The Class Listner.
@@ -154,21 +159,51 @@ public class Subscriber implements MqttCallback {
 	 */
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 
-		/*
-		 * Thread th = new Thread() { public void run(){ AccountDAO acDAO = new
-		 * AccountDAO(); Account patient = acDAO.getInfo(); // 아직 안만들었는데 정보 읽어오는 메소드
-		 * 
-		 * 
-		 * System.out.println("Mqtt topic : " + topic); System.out.println("Mqtt msg : "
-		 * + message.toString());
-		 * 
-		 * String arr[] = message.toString().split("%");
-		 * 
-		 * Patient patient = new Patient(); Location pl = new Location();
-		 * 
-		 * patient.setPulse(arr[0]); patient.setTemp(arr[1]); pl.setLatitude(arr[2]); //
-		 * 위도 지정 pl.setLongitude(arr[3]); // 경도 지정 patient.setLocationInfo(pl); } };
-		 */
+		
+		// * Thread th = new Thread() { public void run(){ 
+		
+		 AccountDAO acDAO = new AccountDAO(); 
+		 
+		 Account account = acDAO.getInfo(); // 아직 안만들었는데 정보 읽어오는 메소드
+		  
+		  
+		  System.out.println("Mqtt topic : " + topic); System.out.println("Mqtt msg : " + message.toString());
+		  
+		  String arr[] = message.toString().split("%");
+		  
+		  Patient patient = new Patient();
+		  
+		  Location pl = new Location();
+		  
+		  patient.setPulse(arr[0]);
+		  patient.setTemp(arr[1]); 
+		  
+		  pl.setLatitude(arr[2]); // 위도 지정
+		  pl.setLongitude(arr[3]); // 경도 지정 
+		  patient.setLocationInfo(pl);
+		
+		LocationDistance calculator = new LocationDistance();
+		HospitalDAO hospitalDAO = new HospitalDAO();
+		ArrayList<Hospital> hospitalList = hospitalDAO.getList();
+		
+		for(int i=0; i<hospitalList.size(); i++) {
+			double max = 0;
+			
+			double dis = calculator.distance(Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLatitude()),
+					Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLongitude()),
+					Double.parseDouble(patient.getLocationInfo().getLatitude()),
+					Double.parseDouble(patient.getLocationInfo().getLongitude()),
+					"meter");
+					// lat1,lon1,lat2,lon2,unit
+			if (dis > max)
+				max = dis;
+			System.out.println(max); 
+		}
+		
+		
+		
+		
+		
 		
 
 		/*

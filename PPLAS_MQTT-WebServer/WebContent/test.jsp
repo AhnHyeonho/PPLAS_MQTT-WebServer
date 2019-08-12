@@ -7,6 +7,7 @@
 
 <%@ page import="hospital.HospitalDAO"%>
 <%@ page import="hospital.Hospital"%>
+<%@ page import="distance.LocationDistance"%>
 
 <!DOCTYPE html>
 <html>
@@ -39,6 +40,8 @@
 		System.out.println("hosLongtitude : " + test.get(i).getHospitalLocationInfo().getLongitude());
 		i++;
 	};
+	
+	
 %>
 
 </body>
