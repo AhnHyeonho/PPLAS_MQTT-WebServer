@@ -30,7 +30,6 @@ public class Patient {
 		this.locationInfo = locationInfo;
 	}
 
-
 	public String getPulse() {
 		return pulse;
 	}

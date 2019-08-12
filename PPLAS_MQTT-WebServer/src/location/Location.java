@@ -1,16 +1,14 @@
 package location;
 
-public class Location {
-	String Latitude; // 위도
+public  class Location {
+	String latitude; // 위도
 	String longitude; // 경도
-	String height; // 고도
-	
 	
 	public String getLatitude() {
-		return Latitude;
+		return latitude;
 	}
-	public void setLatitude(String latitude) {
-		Latitude = latitude;
+	public void  setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
 	public String getLongitude() {
 		return longitude;

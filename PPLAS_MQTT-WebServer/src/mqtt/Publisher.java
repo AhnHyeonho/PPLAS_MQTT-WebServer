@@ -14,38 +14,12 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  */
 public class Publisher {
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
 	
 	private String brokerUrl;	// broker URL
-	
 	private String clientId; // Client ID
-	
 	private String topic; // MQTT Topic
-	
 	private String content; // MQTT Message
-	
 	private int qos = 0; // MQTT QoS
-	
-	public Publisher() {
-		
-	}	// default constructor
-	
-	public Publisher(String brokerUrl, String clientId, String topic) {
-		this.brokerUrl = brokerUrl;
-		this.clientId = clientId;
-		this.topic = topic;
-	}	// constructor
-	
-	public Publisher(String brokerUrl, String clientId, String topic, int qos) {
-		this.brokerUrl = brokerUrl;
-		this.clientId = clientId;
-		this.topic = topic;
-		this.qos = qos;
-	}	// constructor
 	
 	public String getBrokerUrl() {
 		return brokerUrl;
@@ -86,8 +60,26 @@ public class Publisher {
 	public void setQos(int qos) {
 		this.qos = qos;
 	}
+	
+	public Publisher() {
+		
+	}	// default constructor
+	
+	public Publisher(String brokerUrl, String clientId, String topic) {
+		this.brokerUrl = brokerUrl;
+		this.clientId = clientId;
+		this.topic = topic;
+	}	// constructor
+	
+	public Publisher(String brokerUrl, String clientId, String topic, int qos) {
+		this.brokerUrl = brokerUrl;
+		this.clientId = clientId;
+		this.topic = topic;
+		this.qos = qos;
+	}	// constructor
 
 	public void myPublish() {
+		
         MemoryPersistence persistence = new MemoryPersistence();
 
         try {
