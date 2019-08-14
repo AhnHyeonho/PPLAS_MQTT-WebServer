@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import hospital.Hospital;
+import location.Location;
+
 public class AccountDAO {
 
 	private Connection conn;
@@ -62,4 +65,30 @@ public class AccountDAO {
 		}
 		return -1;	// 데이터베이스 오류
 	}
+	
+	public Account getInfo(String id) {
+		String SQL = "SELECT * FROM ACCOUNT WHERE accountID = ?";
+		Account account = new Account();
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				account.setAccountID(rs.getString(1));
+				account.setAccountPassword(rs.getString(2));
+				account.setAccountName(rs.getString(3));
+				account.setAccountResidentID(rs.getString(4));
+				account.setAccountAuthority(rs.getString(5));
+				account.setAccountPhone(rs.getString(6));
+				return account;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return account;
+	}
+	
+
+	
 }
