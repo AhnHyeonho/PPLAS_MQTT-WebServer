@@ -75,7 +75,6 @@ public class AccountDAO {
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-
 				account.setAccountID(rs.getString(1));
 				account.setAccountPassword(rs.getString(2));
 				account.setAccountName(rs.getString(3));
