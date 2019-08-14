@@ -29,7 +29,7 @@ public class Subscriber implements MqttCallback {
 	private String brokerUrl; 	/** The broker url. */
 	private String clientId;	/** The client id. */
 	private String topic;	/** The topic. */
-	private Hospital nearestHospital
+	private Hospital nearestHospital;
 	public String getBrokerUrl() {
 		return brokerUrl;
 	}
@@ -130,7 +130,8 @@ public class Subscriber implements MqttCallback {
 
 	public Hospital getNearestHospital()
 	{
-		
+		Hospital hp = new Hospital();
+		return hp;
 	}
 	
 
