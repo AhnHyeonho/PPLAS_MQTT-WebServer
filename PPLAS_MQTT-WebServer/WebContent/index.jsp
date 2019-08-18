@@ -9,7 +9,7 @@
 </head>
 <body>
 <script>
-	location.href = 'test.jsp';
+	location.href = 'main.jsp';
 </script>
 </body>
 </html>
