@@ -9,10 +9,24 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <title>MQTT 환자관리 웹 사이트</title>
+<style>
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+  height: 100%;
+}
+/* Optional: Makes the sample page fill the window. */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+</style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrsGow62wDXE8Yw7148CXZSVuaO2c9HsU"></script>
 </head>
 <body>
 	<%
@@ -35,7 +49,6 @@
 		}
 		Log log = new LogDAO().getLog(logID);
 	%>
-			<%= logID %>
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
@@ -49,8 +62,8 @@
 		</div>		
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="main.jsp">메인</a></li>
-				 <li><a href="log.jsp">응급 리스트</a></li> 
+				<li><a href="main.jsp">메인</a></li>
+				<li class="active"><a href="log.jsp">로그</a></li> 
 			</ul>
 			<%
 				if(accountID == null) {
@@ -108,14 +121,49 @@
 					</tr>
 					<tr>
 						<td>위치</td>
-						<td colspan="2" style ="min-height: 200px; text-align: left;">여기다가 네이버 지도 API 넣을거임 
+						<td colspan="2" style ="min-height: 200px; text-align: left;">
+						<div id="map" style="height:350px; width:700px;"></div>
+						    <script>
+						      
+						      /* var location = new google.maps.LatLng(log.getLatitude(), log.getLongtitude()); */
+						      /* var location = new google.maps.LatLng(37.582520, 127.010731); */
+						      function initMap() {
+						    	var map;
+						    	var location = {lat : <%= log.getLatitude() %>  , lng: <%= log.getLongtitude() %>};
+						    	map = new google.maps.Map(document.getElementById('map'), {
+						          center: location,
+						          zoom: 18
+						        });
+						        map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+						        	      document.getElementById('info'));
+						
+						    	marker = new google.maps.Marker({
+						    	    map: map,
+						    	    draggable: true,
+						    	    position: location,
+						    		title: '환자 발생 위치'
+						    	});
+						    	
+						    	var contentString = "환자 발생 위치<br> 좌표 : <%= log.getLatitude()%> , <%= log.getLongtitude() %> <br> 맥박 : <%= log.getPulse()%><br> 체온 : <%= log.getTemp()%>";	// mouseover 시 표시되는 문구
+						    	var infowindow = new google.maps.InfoWindow({	// infoWindow 생성
+						            content: contentString,
+						            maxWidth: 200
+						          }); 
+						    	marker.addListener('mouseover', function() {	// marker에 리스너 등록
+						    		infowindow.open(map, marker);
+						          });
+						    	marker.addListener('mouseout', function() {		// marker에 리스너 등록
+						    		infowindow.close();
+						          });
+						      }
+						    </script>
+						    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrsGow62wDXE8Yw7148CXZSVuaO2c9HsU&callback=initMap" 
+						    async defer></script>
+						</td>
 					</tr>
 				</tbody>
 			</table>
 			<a href="log.jsp" class="btn btn-primary">목록</a>
-			
-			<input type="submit" class="btn btn-primary pull-right" value="글쓰기">
-			
 		</div>
 	</div>
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
