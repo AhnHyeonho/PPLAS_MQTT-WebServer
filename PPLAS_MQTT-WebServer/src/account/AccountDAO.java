@@ -5,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-//import hospital.Hospital;
-//import location.Location;
 
 public class AccountDAO {
 

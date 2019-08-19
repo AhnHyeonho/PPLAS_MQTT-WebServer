@@ -31,7 +31,7 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="main.jsp">메인</a></li>
-				<li><a href="log.jsp">로그</a></li>
+				 <li><a href="bbs.jsp">응급 리스트</a></li> 
 			</ul>
 			<%
 				if(accountID == null) {

@@ -10,7 +10,7 @@ import location.Location;
 
 public class HospitalDAO {
 	private Connection conn;
-	//private PreparedStatement pstmt;
+	private PreparedStatement pstmt;
 	private ResultSet rs;
 	
 	public HospitalDAO() {

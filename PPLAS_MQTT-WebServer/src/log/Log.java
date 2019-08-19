@@ -1,47 +1,83 @@
 package log;
 
+import account.Account;
+import location.Location;
+
 public class Log {
-	private int logID; // log 번호
-	private String logTitle; // log 제목
-	private String patientID; // 환자 이름
-	private String logDate; // log 작성날짜
-	private String logContent; // log 내용
-	private int logAvailable; // log 삭제여부
 	
+	private int logID;
+	private Account accountInfo;	// SQL로부터 받아온 환자 정보
+	private String latitude;	// 위도
+	private String longtitude; // 경도
+	private String pulse;	// 맥박
+	private String temp;	// 체온
+	private String date;
+	
+	public String getDate() {
+		return date;
+	}
+
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+
 	public int getLogID() {
 		return logID;
 	}
+
+
 	public void setLogID(int logID) {
 		this.logID = logID;
 	}
-	public String getLogTitle() {
-		return logTitle;
+
+
+	public Account getAccountInfo() {
+		return accountInfo;
 	}
-	public void setLogTitle(String logTitle) {
-		this.logTitle = logTitle;
+
+
+	public void setAccountInfo(Account accountInfo) {
+		this.accountInfo = accountInfo;
 	}
-	public String getPatientID() {
-		return patientID;
+
+	public String getLatitude() {
+		return latitude;
 	}
-	public void setPatientID(String patientID) {
-		this.patientID = patientID;
+
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
-	public String getLogDate() {
-		return logDate;
+
+
+	public String getLongtitude() {
+		return longtitude;
 	}
-	public void setLogDate(String logDate) {
-		this.logDate = logDate;
+
+
+	public void setLongtitude(String longtitude) {
+		this.longtitude = longtitude;
 	}
-	public int getLogAvailable() {
-		return logAvailable;
+
+
+	public String getPulse() {
+		return pulse;
 	}
-	public void setLogAvailable(int logAvailable) {
-		this.logAvailable = logAvailable;
+
+
+	public void setPulse(String pulse) {
+		this.pulse = pulse;
 	}
-	public String getLogContent() {
-		return logContent;
+
+
+	public String getTemp() {
+		return temp;
 	}
-	public void setLogContent(String logContent) {
-		this.logContent = logContent;
+
+
+	public void setTemp(String temp) {
+		this.temp = temp;
 	}
 }

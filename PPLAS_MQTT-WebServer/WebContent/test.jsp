@@ -17,12 +17,12 @@
 </head>
 <body>
 <%
-/*  	Publisher pb = new Publisher();
+ 	Publisher pb = new Publisher();
 	pb.setBrokerUrl("tcp://113.198.84.52:1883");
 	pb.setClientId("JavaSample");
-	pb.setTopic("user/patient/ssh");
+	pb.setTopic("user/patient/shseo");
 	pb.setContent("150%39.8%37.56653:126.9779691900000:38");
-	pb.myPublish();    */
+	pb.myPublish();  
 
 	/* 	Subscriber sb = new Subscriber();
 	sb.setBrokerUrl("tcp://116.126.97.126:1883");

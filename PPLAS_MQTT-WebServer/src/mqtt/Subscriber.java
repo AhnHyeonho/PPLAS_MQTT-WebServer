@@ -13,7 +13,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import account.Account;
 import account.AccountDAO;
 import location.Location;
-import patient.Patient;
+import log.Log;
+import log.LogDAO;
 import distance.LocationDistance;
 import hospital.Hospital;
 import hospital.HospitalDAO;
@@ -29,7 +30,9 @@ public class Subscriber implements MqttCallback {
 	private String brokerUrl; 	/** The broker url. */
 	private String clientId;	/** The client id. */
 	private String topic;	/** The topic. */
-	//private Hospital nearestHospital;
+	private Hospital nearestHospital;
+	private Account account;
+	private Log patient;
 	public String getBrokerUrl() {
 		return brokerUrl;
 	}
@@ -130,8 +133,16 @@ public class Subscriber implements MqttCallback {
 
 	public Hospital getNearestHospital()
 	{
-		Hospital hp = new Hospital();
-		return hp;
+		return nearestHospital;
+	}
+	
+	public Account getAccount()
+	{
+		return account;
+	}
+	public Log getPatient()
+	{
+		return patient;
 	}
 	
 
@@ -175,7 +186,7 @@ public class Subscriber implements MqttCallback {
 		 
 		 AccountDAO acDAO = new AccountDAO(); 
 		 
-		 Account account = acDAO.getInfo(topicSplit[2]); // 아직 안만들었는데 정보 읽어오는 메소드
+		 account = acDAO.getInfo(topicSplit[2]); // 아직 안만들었는데 정보 읽어오는 메소드
 		  
 		  
 		  String arr[] = message.toString().split("%");
@@ -187,19 +198,18 @@ public class Subscriber implements MqttCallback {
 		  
 		  System.out.println(locationArr[0]);
 		  System.out.println(locationArr[1]);
-		  Patient patient = new Patient();
+		  patient = new Log();
 		  
-		  
-		  Location pl = new Location();
 		  
 		  patient.setAccountInfo(account);
 		  patient.setPulse(arr[0]);
 		  patient.setTemp(arr[1]); 
-		  
-		  pl.setLatitude(locationArr[0]); // 위도 지정
-		  pl.setLongitude(locationArr[1]); // 경도 지정 
-		  patient.setLocationInfo(pl);
+		  patient.setLatitude(locationArr[0]);
+		  patient.setLongtitude(locationArr[1]);
 		
+		  LogDAO patientDAO = new LogDAO();
+		  patientDAO.store(topicSplit[2], locationArr[0], locationArr[1], arr[0], arr[1]);
+		  
 		LocationDistance calculator = new LocationDistance();
 		
 		HospitalDAO hospitalDAO = new HospitalDAO();
@@ -209,22 +219,33 @@ public class Subscriber implements MqttCallback {
 		int index = 0;
 		double min = 999999;
 		for(int i=0; i<hospitalList.size(); i++) {
-			
+			if(i==0)
+			{
+				double dis = calculator.distance(Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLatitude()),
+						Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLongitude()),
+						Double.parseDouble(patient.getLatitude()),
+						Double.parseDouble(patient.getLongtitude()),
+						"meter");
+				min = dis;
+			}
+			else {
 			double dis = calculator.distance(Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLatitude()),
 					Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLongitude()),
-					Double.parseDouble(patient.getLocationInfo().getLatitude()),
-					Double.parseDouble(patient.getLocationInfo().getLongitude()),
+					Double.parseDouble(patient.getLatitude()),
+					Double.parseDouble(patient.getLongtitude()),
 					"meter");
-			System.out.println(dis);
 					// lat1,lon1,lat2,lon2,unit
-			if (dis < min) {
-				min = dis;
-				index = i;
+				if (dis < min) {
+					min = dis;
+					index = i;
+				}			
 			}
+
 		}
 		
 		System.out.println(min); 
-		System.out.println(index); 
+		System.out.println(index);
+		System.out.println("가장 가까운 병원 : " + hospitalList.get(index).getHospitalName());
 		
 
 		//환자의 정보와 가장 가까운 병원의 위치 정보까지 알아냄

@@ -6,8 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import hospital.Hospital;
+import location.Location;
+import account.Account;
+import account.AccountDAO;
+
 public class LogDAO {
+
 	private Connection conn;
+	private PreparedStatement pstmt;
 	private ResultSet rs;
 	
 	public LogDAO() {
@@ -23,140 +30,130 @@ public class LogDAO {
 		}
 	}
 	
-	public String getDate() {
-		String SQL = "SELECT NOW()";
+	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
+		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?, ?)";  //ï¿½ì½ï¿½ì˜±ï¿½ì“½ ï¿½ë–†åª›ê¾©?ï¿½ï¿½ åª›ï¿½ï¿½ì¡‡ï¿½ì‚¤ï¿½ë’— MySQLï¿½ì“½ ?ï¿½ï¿½ëª„ì˜£
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, getNext());
+			pstmt.setString(2, accountID);
+			pstmt.setString(3, latitude);
+			pstmt.setString(4, longtitude);
+			pstmt.setString(5, pulse);
+			pstmt.setString(6, temp);
+			pstmt.setString(7, getDate());
+			return pstmt.executeUpdate();
+			
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		
+		return -1; //ï¿½ëœ²ï¿½ì” ï¿½ê½£è¸°ì¢?ï¿½ï¿½ï¿½ë’ª ï¿½ì‚¤?ï¿½ï¿½ï¿½?
+	}
+	
+	public Log getLog(int logID) {
+		String SQL = "SELECT * FROM LOG WHERE logID = ?";
+		AccountDAO accountDAO = new AccountDAO();
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, logID);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				Log log = new Log();
+				log.setLogID(rs.getInt(1));
+				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				log.setLatitude(rs.getString(3));
+				log.setLongtitude(rs.getString(4));
+				log.setPulse(rs.getString(5));
+				log.setTemp(rs.getString(6));
+				log.setDate(rs.getString(7));
+				return log;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getDate() {
+		String SQL = "SELECT NOW()";  //ï¿½ì½ï¿½ì˜±ï¿½ì“½ ï¿½ë–†åª›ê¾©?ï¿½ï¿½ åª›ï¿½ï¿½ì¡‡ï¿½ì‚¤ï¿½ë’— MySQLï¿½ì“½ ?ï¿½ï¿½ëª„ì˜£
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				return rs.getString(1);
 			}
-		} catch(Exception e) {
+			
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 		}
-		return "";
+		
+		return ""; //ï¿½ëœ²ï¿½ì” ï¿½ê½£è¸°ì¢?ï¿½ï¿½ï¿½ë’ª ï¿½ì‚¤?ï¿½ï¿½ï¿½?
 	}
 	
 	public int getNext() {
-		String SQL ="SELECT logID FROM LOG ORDER BY logID DESC";
-		
+		String SQL = "SELECT logID FROM LOG ORDER BY logID DESC"; 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return rs.getInt(1) + 1;
+				return rs.getInt(1) +1;
 			}
-			return 1; // Ã¹ ¹øÂ° °Ô½Ã¹°ÀÎ °æ¿ì
-		} catch(Exception e) {
+			return 1;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // µ¥ÀÌÅÍº£ÀÌ½º ¿À·ù
+		return -1; //ï¿½ëœ²ï¿½ì” ï¿½ê½£è¸°ì¢?ï¿½ï¿½ï¿½ë’ª ï¿½ì‚¤?ï¿½ï¿½ï¿½?
 	}
 	
-	public int write(String logTitle, String patientID, String logContent) {
-		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?)";
+	public ArrayList<Log> getList(int pageNumber)
+	{
+		String SQL = "SELECT * FROM LOG WHERE logID < ? ORDER BY logID DESC LIMIT 10";
+		ArrayList<Log> list = new ArrayList<Log>();
+		AccountDAO accountDAO = new AccountDAO();
 		
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext());
-			pstmt.setString(2, logTitle);
-			pstmt.setString(3,  patientID);
-			pstmt.setString(4, getDate());
-			pstmt.setString(5, logContent);
-			pstmt.setInt(6, 1);
-			return pstmt.executeUpdate();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return -1; // µ¥ÀÌÅÍº£ÀÌ½º ¿À·ù
-	}
-	
-	public ArrayList<Log> getList(int pageNumber) {
-		String SQL = "SELECT * FROM LOG WHERE logID < ? AND logAvailable = 1 ORDER BY logID DESC LIMIT 10";
-		ArrayList<Log> list = new ArrayList<Log>();
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
+			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				Log log = new Log();
 				log.setLogID(rs.getInt(1));
-				log.setLogTitle(rs.getString(2));
-				log.setPatientID(rs.getString(3));
-				log.setLogDate(rs.getString(4));
-				log.setLogContent(rs.getString(5));
-				log.setLogAvailable(rs.getInt(6));
+				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				log.setLatitude(rs.getString(3));
+				log.setLongtitude(rs.getString(4));
+				log.setPulse(rs.getString(5));
+				log.setTemp(rs.getString(6));
+				log.setDate(rs.getString(7));
 				list.add(log);
+
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return list;
+		return list; 
 	}
 	
 	public boolean nextPage(int pageNumber) {
-		String SQL = "SELECT * FROM LOG WHERE logID < ? AND logAvailable = 1";
+		String SQL = "SELECT logID FROM Log WHERE logID < ?";
+
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
+			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				return true;
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 	
-	public Log getLog(int logID) {
-		String SQL = "SELECT * FROM LOG WHERE logID = ?";
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, logID);
-			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				Log log = new Log();
-				log.setLogID(rs.getInt(1));
-				log.setLogTitle(rs.getString(2));
-				log.setPatientID(rs.getString(3));
-				log.setLogDate(rs.getString(4));
-				log.setLogContent(rs.getString(5));
-				log.setLogAvailable(rs.getInt(6));
-				return log;
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+
 	
-	public int update(int logID, String logTitle, String logContent) {
-		String SQL = "UPDATE LOG SET logTitle = ?, logContent = ? WHERE logID = ?";
-		
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, logTitle);
-			pstmt.setString(2, logContent);
-			pstmt.setInt(3, logID);
-			return pstmt.executeUpdate();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return -1; // µ¥ÀÌÅÍº£ÀÌ½º ¿À·ù
-	}
+
 	
-	public int delete(int logID) {
-		String SQL = "UPDATE LOG SET logAvailable = 0 WHERE logID = ?";
-		
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, logID);
-			return pstmt.executeUpdate();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return -1; // µ¥ÀÌÅÍº£ÀÌ½º ¿À·ù
-	}
 }
