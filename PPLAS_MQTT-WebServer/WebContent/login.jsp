@@ -25,6 +25,7 @@
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
 				<li><a href="log.jsp">로그</a></li>
+
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"> 

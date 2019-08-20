@@ -12,25 +12,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="initial-scale=1.0">
-<meta charset="utf-8">
+<meta charset="EUC-KR">
 <title>Insert title here</title>
-
-<style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-
-
 </head>
 <body>
 <%
@@ -41,7 +24,7 @@
 	pb.setContent("150%39.8%37.56653:126.9779691900000");
 	pb.myPublish();  */ 
 
-	/*  	Subscriber sb = new Subscriber();
+	 	Subscriber sb = new Subscriber();
 	sb.setBrokerUrl("tcp://localhost:1883");
 	sb.setClientId("JavaSample");
 	sb.setTopic("user/patient/shseo");
@@ -56,25 +39,10 @@
 		System.out.println("hosLatitude : " + test.get(i).getHospitalLocationInfo().getLatitude());
 		System.out.println("hosLongtitude : " + test.get(i).getHospitalLocationInfo().getLongitude());
 		i++;
-	}; */
+	};
 	
 	
 %>
 
-<div id="map"></div>
-    <script>
-      var map;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 8
-        });
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB39VIra86A8oJg4ZavCCYy4cPQAFA5OHM&callback=initMap"
-    async defer></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB39VIra86A8oJg4ZavCCYy4cPQAFA5OHM&libraries=geometry,places">
-	</script>
-    
 </body>
 </html>
