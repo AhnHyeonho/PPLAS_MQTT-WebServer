@@ -19,7 +19,7 @@ public class LogDAO {
 	
 	public LogDAO() {
 		try {
-			String dbURL = "jdbc:mysql://116.126.97.126:3306/pplas?useSSL=false";
+			String dbURL = "jdbc:mysql://116.126.97.126:3306/pplas";
 			String dbID = "root";
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
@@ -31,7 +31,7 @@ public class LogDAO {
 	}
 	
 	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
-		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?, ?)";  //�쁽�옱�쓽 �떆媛꾩?�� 媛��졇�삤�뒗 MySQL�쓽 ?��몄옣
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext());
@@ -48,7 +48,7 @@ public class LogDAO {
 			e.printStackTrace();
 		}
 		
-		return -1; 
+		return -1; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
 	}
 	
 	public Log getLog(int logID) {
@@ -77,7 +77,7 @@ public class LogDAO {
 	}
 	
 	public String getDate() {
-		String SQL = "SELECT NOW()";  
+		String SQL = "SELECT NOW()";  //�쁽�옱�쓽 �떆媛꾩?�� 媛��졇�삤�뒗 MySQL�쓽 ?��몄옣
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -90,7 +90,7 @@ public class LogDAO {
 			e.printStackTrace();
 		}
 		
-		return ""; 
+		return ""; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
 	}
 	
 	public int getNext() {
@@ -105,7 +105,7 @@ public class LogDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; 
+		return -1; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
 	}
 	
 	public ArrayList<Log> getList(int pageNumber)
