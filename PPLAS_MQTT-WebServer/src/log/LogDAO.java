@@ -19,7 +19,7 @@ public class LogDAO {
 	
 	public LogDAO() {
 		try {
-			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
+			String dbURL = "jdbc:mysql://116.126.97.126:3306/pplas?useSSL=false";
 			String dbID = "root";
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
