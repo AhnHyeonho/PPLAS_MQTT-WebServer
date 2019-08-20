@@ -124,9 +124,6 @@ html, body {
 						<td colspan="2" style ="min-height: 200px; text-align: left;">
 						<div id="map" style="height:350px; width:700px;"></div>
 						    <script>
-						      
-						      /* var location = new google.maps.LatLng(log.getLatitude(), log.getLongtitude()); */
-						      /* var location = new google.maps.LatLng(37.582520, 127.010731); */
 						      function initMap() {
 						    	var map;
 						    	var location = {lat : <%= log.getLatitude() %>  , lng: <%= log.getLongtitude() %>};
