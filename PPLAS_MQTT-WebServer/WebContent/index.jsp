@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,8 +8,8 @@
 <title>MQTT 환자관리 웹 사이트</title>
 </head>
 <body>
-	<script>
-	location.href = 'main.jsp';
+<script>
+	location.href = 'test.jsp';
 </script>
 </body>
 </html>

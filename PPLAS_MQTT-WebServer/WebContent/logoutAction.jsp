@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ page import="account.AccountDAO"%>
-<%@ page import="java.io.PrintWriter"%>
+    pageEncoding="UTF-8"%>
+<%@ page import="account.AccountDAO" %>
+<%@ page import="java.io.PrintWriter" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,4 +16,4 @@
 		location.href = 'main.jsp';
 	</script>
 </body>
-</html>
+</html> 

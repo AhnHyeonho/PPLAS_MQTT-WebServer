@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
-<%@ page import="log.Log" %>
-<%@ page import="log.LogDAO" %>
+<%@ page import="account.Account" %>
+<%@ page import="account.AccountDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>
@@ -39,8 +39,8 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				 <li class="acitve"><a href="log.jsp">로그</a></li> 
-				 <li><a href="monitoring.jsp">실시간 모니터링</a>
+				 <li><a href="log.jsp">로그</a></li> 
+				 <li class="active"><a href="monitoring.jsp">실시간 모니터링</a>
 			</ul>
 			<%
 				if(accountID == null) {
@@ -80,48 +80,33 @@
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 				<thead>
 					<tr>
-						<th style="background-color: #eeeeee; text-align: center;">번호</th>
+						<th style="background-color: #eeeeee; text-align: center;">환자아이디</th>
 						<th style="background-color: #eeeeee; text-align: center;">환자아이디</th>
 						<th style="background-color: #eeeeee; text-align: center;">환자이름</th>
-						<th style="background-color: #eeeeee; text-align: center;">발병일</th>
+						<th style="background-color: #eeeeee; text-align: center;">환자핸드폰</th>
 					</tr>
 				</thead>
 				<tbody>
 					<%
-						LogDAO logDAO = new LogDAO();
-												ArrayList<Log> list = logDAO.getList(pageNumber);
+						AccountDAO accountDAO = new AccountDAO();
+												ArrayList<Account> list = accountDAO.getList();
 												
 										
 												for(int i=0; i<list.size(); i++) {
 					%>
 					<tr>
-						<td><%= list.get(i).getLogID() %> </td>
-						<td><a href="log_view.jsp?logID=<%=list.get(i).getLogID()%>"> <%=list.get(i).getAccountInfo().getAccountID()%> </a></td>
-						<td><%= list.get(i).getAccountInfo().getAccountName() %></td> 
-						<td><%= list.get(i).getDate().substring(0, 11) + list.get(i).getDate().substring(11, 13) + "시" + list.get(i).getDate().substring(14, 16) + "분" %></td>
+						<td><%= list.get(i).getAccountID() %> </td>
+						<td><a href="monitoring_view.jsp?acID=<%=list.get(i).getAccountID() %>"> <%=list.get(i).getAccountID()%> </a></td>
+						<td><%= list.get(i).getAccountName() %></td> 
+						<td><%= list.get(i).getAccountPhone() %></td>
 					</tr>
 					<%
 						}
 					%>
-
 				</tbody>
 			</table>
-					<%
-						if(pageNumber != 1) {
-					%>
-							<a href="log.jsp?pageNumber=<%=pageNumber -1%>" class="btn btn-success btn-arrow-left">이전</a>
-						<% 
-						} 
-					    if(logDAO.nextPage(pageNumber +1)) {
-						%>
-							<a href="log.jsp?pageNumber=<%=pageNumber +1%>" class="btn btn-success btn-arrow-right">다음</a>
-						<% 
-						}
-						%>
 						
 				
-			
-			<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>
 	</div>
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>

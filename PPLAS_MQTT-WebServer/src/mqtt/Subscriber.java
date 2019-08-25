@@ -32,7 +32,8 @@ public class Subscriber implements MqttCallback {
 	private String topic;	/** The topic. */
 	private Hospital nearestHospital;
 	private Account account;
-	private Log patient;
+	private int count;
+	private Publisher publisher;
 	public String getBrokerUrl() {
 		return brokerUrl;
 	}
@@ -66,6 +67,7 @@ public class Subscriber implements MqttCallback {
 		this.brokerUrl = brokerUrl;
 		this.clientId = clientId;
 		this.topic = topic;
+		count = 0;
 	}
 
 	public void subscribe() {
@@ -131,19 +133,6 @@ public class Subscriber implements MqttCallback {
 		}
 	}
 
-	public Hospital getNearestHospital()
-	{
-		return nearestHospital;
-	}
-	
-	public Account getAccount()
-	{
-		return account;
-	}
-	public Log getPatient()
-	{
-		return patient;
-	}
 	
 
 	/*
@@ -176,79 +165,111 @@ public class Subscriber implements MqttCallback {
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 
 		System.out.println("Mqtt topic : " + topic); System.out.println("Mqtt msg : " + message.toString());
-		// * Thread th = new Thread() { public void run(){ 
 		
 		  String topicSplit[] = topic.split("/"); // user/patient/id 에서 id를 짜름
-		 
-		 System.out.println(topicSplit[0]);
-		 System.out.println(topicSplit[1]);
+
+		  
 		 System.out.println(topicSplit[2]);
+		 
+		 String id = topicSplit[2];
 		 
 		 AccountDAO acDAO = new AccountDAO(); 
 		 
-		 account = acDAO.getInfo(topicSplit[2]); // 아직 안만들었는데 정보 읽어오는 메소드
+		 account = acDAO.getInfo(id); 
 		  
 		  
 		  String arr[] = message.toString().split("%");
+		  String pulse = arr[0];
+		  String temp = arr[1];
+
 		  System.out.println(arr[0]);
 		  System.out.println(arr[1]);
 		  System.out.println(arr[2]);
 		  
 		  String locationArr[] = arr[2].split(":");
+		  String latitude= locationArr[0];
+		  String longtitude = locationArr[1];
 		  
 		  System.out.println(locationArr[0]);
 		  System.out.println(locationArr[1]);
-		  patient = new Log();
 		  
 		  
-		  patient.setAccountInfo(account);
-		  patient.setPulse(arr[0]);
-		  patient.setTemp(arr[1]); 
-		  patient.setLatitude(locationArr[0]);
-		  patient.setLongtitude(locationArr[1]);
-		
-		  LogDAO patientDAO = new LogDAO();
-		  patientDAO.store(topicSplit[2], locationArr[0], locationArr[1], arr[0], arr[1]);
-		  
-		LocationDistance calculator = new LocationDistance();
-		
-		HospitalDAO hospitalDAO = new HospitalDAO();
-		ArrayList<Hospital> hospitalList = hospitalDAO.getList(); 
-		
-		
-		int index = 0;
-		double min = 999999;
-		for(int i=0; i<hospitalList.size(); i++) {
-			if(i==0)
-			{
+			LocationDistance calculator = new LocationDistance();
+			
+			HospitalDAO hospitalDAO = new HospitalDAO();
+			ArrayList<Hospital> hospitalList = hospitalDAO.getList(); 
+			
+			
+			
+			
+			int index = 0;
+			double min = 999999;
+			for(int i=0; i<hospitalList.size(); i++) {
+				if(i==0)
+				{
+					double dis = calculator.distance(Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLatitude()),
+							Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLongitude()),
+							Double.parseDouble(latitude),
+							Double.parseDouble(longtitude),
+							"meter");
+					min = dis;
+				}
+				else {
 				double dis = calculator.distance(Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLatitude()),
 						Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLongitude()),
-						Double.parseDouble(patient.getLatitude()),
-						Double.parseDouble(patient.getLongtitude()),
+						Double.parseDouble(latitude),
+						Double.parseDouble(longtitude),
 						"meter");
-				min = dis;
-			}
-			else {
-			double dis = calculator.distance(Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLatitude()),
-					Double.parseDouble(hospitalList.get(i).getHospitalLocationInfo().getLongitude()),
-					Double.parseDouble(patient.getLatitude()),
-					Double.parseDouble(patient.getLongtitude()),
-					"meter");
-					// lat1,lon1,lat2,lon2,unit
-				if (dis < min) {
-					min = dis;
-					index = i;
-				}			
-			}
+						// lat1,lon1,lat2,lon2,unit
+					if (dis < min) {
+						min = dis;
+						index = i;
+					}			
+				}
 
-		}
-		
-		System.out.println(min); 
-		System.out.println(index);
-		System.out.println("가장 가까운 병원 : " + hospitalList.get(index).getHospitalName());
+			}
+			
+			System.out.println(min); 
+			System.out.println(index);
+			System.out.println("가장 가까운 병원 : " + hospitalList.get(index).getHospitalName());
+			
+
+			//환자의 정보와 가장 가까운 병원의 위치 정보까지 알아냄
+			
+			
+			
+			
+			
+			
+			
+		  if( (Float.parseFloat(temp) > 38 || Float.parseFloat(temp) < 36) || (Float.parseFloat(pulse) < 60 || Float.parseFloat(pulse) > 100)) {
+			  count++;
+			  
+			  if(count >= 5) {
+				  //응급상황 알고리즘 : 응급상황이 지속되면 count가 쌓이다가 5번정도 지속이 되면 log 정보를 기록하고 구조대에게 publish 한다
+				  //응급상황일 경우 데이터베이스에 로그정보를 저장한다
+			  
+				Log log = new Log();
+			 
+			  	log.setAccountInfo(account);
+			  	log.setPulse(pulse);
+			  	log.setTemp(temp); 
+			  	log.setLatitude(latitude);
+			  	log.setLongtitude(longtitude);
+			  
+			  	LogDAO logDAO = new LogDAO();
+			  	logDAO.store(id, latitude, longtitude, pulse, temp);
+			  }
+		  } else // 그냥 정상 수치일 경우
+		  {
+			  
+		  }
+		  
+
 		
 
-		//환자의 정보와 가장 가까운 병원의 위치 정보까지 알아냄
+		  
+
 		
 		
 		

@@ -19,7 +19,7 @@ public class LogDAO {
 	
 	public LogDAO() {
 		try {
-			String dbURL = "jdbc:mysql://116.126.97.126:3306/pplas";
+			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
 			String dbID = "root";
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
@@ -152,7 +152,34 @@ public class LogDAO {
 		return false;
 	}
 	
+	public Log getMaxLog(String accountID) {
+		String SQL = "SELECT * FROM LOG WHERE ACCOUNTINFO = ? ORDER BY LOGID DESC LIMIT 1";
+		AccountDAO accountDAO = new AccountDAO();
+		Log log = new Log();
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, accountID);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				log.setLogID(rs.getInt(1));
+				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				log.setLatitude(rs.getString(3));
+				log.setLongtitude(rs.getString(4));
+				log.setPulse(rs.getString(5));
+				log.setTemp(rs.getString(6));
+				log.setDate(rs.getString(7));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return log; 
+		
+	}
+	
 
+	public static void main(String[] args) {
+		new LogDAO();
+	}
 	
 
 	

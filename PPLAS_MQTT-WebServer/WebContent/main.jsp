@@ -32,6 +32,7 @@
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="main.jsp">메인</a></li>
 				 <li><a href="log.jsp">로그</a></li> 
+				 <li><a href="monitoring.jsp">실시간 모니터링</a>
 			</ul>
 			<%
 				if(accountID == null) {

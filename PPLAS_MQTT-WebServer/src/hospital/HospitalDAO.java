@@ -15,7 +15,7 @@ public class HospitalDAO {
 	
 	public HospitalDAO() {
 		try {
-			String dbURL = "jdbc:mysql://116.126.97.126:3306/pplas";
+			String dbURL = "jdbc:mysql://localhost:3306/pplas";
 			String dbID = "root";
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");

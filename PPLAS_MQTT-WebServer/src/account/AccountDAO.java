@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import log.Log;
 
 
 public class AccountDAO {
@@ -14,7 +17,7 @@ public class AccountDAO {
 	
 	public AccountDAO() {
 		try {
-			String dbURL = "jdbc:mysql://116.126.97.126:3306/pplas";
+			String dbURL = "jdbc:mysql://localhost:3306/pplas";
 			String dbID = "root";
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
@@ -87,6 +90,30 @@ public class AccountDAO {
 		return account;
 	}
 	
+	public ArrayList<Account> getList()
+	{
+		String SQL = "SELECT * FROM ACCOUNT ORDER BY ACCOUNTID DESC LIMIT 10";
+		ArrayList<Account> list = new ArrayList<Account>();
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Account account = new Account();
+				account.setAccountID(rs.getString(1));
+				account.setAccountPassword(rs.getString(2));
+				account.setAccountName(rs.getString(3));
+				account.setAccountResidentID(rs.getString(4));
+				account.setAccountAuthority(rs.getString(5));
+				account.setAccountPhone(rs.getString(6));
+				list.add(account);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list; 
+	}
 
 	
 }
