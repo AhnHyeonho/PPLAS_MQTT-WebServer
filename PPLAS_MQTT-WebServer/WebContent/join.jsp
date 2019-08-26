@@ -24,7 +24,8 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				<!-- <li><a href="bbs.jsp">게시판</a></li> -->
+				<li><a href="log.jsp">로그</a></li>
+				<li><a href="monitoring.jsp">실시간 모니터링</a>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"> 

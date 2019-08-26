@@ -19,12 +19,13 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="main.jsp">JSP 게시판 웹 사이트</a>
+			<a class="navbar-brand" href="main.jsp">MQTT 환자관리 웹 사이트</a>
 		</div>		
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				<li><a href="bbs.jsp">게시판</a></li>
+				<li><a href="log.jsp">로그</a></li>
+				<li><a href="monitoring.jsp">실시간 모니터링</a>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"> 
