@@ -122,7 +122,7 @@ function searchFunction() {
   	$.ajax({
   	type: "POST",
   	dataType:"json",
-  	url: "/PPLAS_MQTT-WebServer/logSearchServlet",
+  	url: "/PPLAS_MQTT-WebServer/checkSearchServlet",
     data: { "acID" : acID },
     success: function(data) {
   								      
