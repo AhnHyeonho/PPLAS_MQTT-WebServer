@@ -30,6 +30,7 @@ html, body {
 
 
 
+
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <title>MQTT 환자관리 웹 사이트</title>
@@ -55,6 +56,7 @@ html, body {
 		}
 		Log log = new LogDAO().getLog(logID);
 	%>
+			<%= logID %>
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
@@ -68,8 +70,8 @@ html, body {
 		</div>		
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="main.jsp">메인</a></li>
-				<li class="active"><a href="log.jsp">로그</a></li> 
+				<li class="active"><a href="main.jsp">메인</a></li>
+				 <li><a href="log.jsp">로그</a></li> 
 			</ul>
 			<%
 				if(accountID == null) {

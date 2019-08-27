@@ -1,4 +1,4 @@
-package log;
+package check;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,13 +11,13 @@ import location.Location;
 import account.Account;
 import account.AccountDAO;
 
-public class LogDAO {
+public class CheckDAO {
 
 	private Connection conn;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
 	
-	public LogDAO() {
+	public CheckDAO() {
 		try {
 			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
 			String dbID = "root";
@@ -31,7 +31,7 @@ public class LogDAO {
 	}
 	
 	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
-		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?, ?)";  // 
+		String SQL = "INSERT INTO CHECK VALUES (?, ?, ?, ?, ?, ?, ?)";  //�쁽�옱�쓽 �떆媛꾩?�� 媛��졇�삤�뒗 MySQL�쓽 ?��몄옣
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext());
@@ -48,27 +48,27 @@ public class LogDAO {
 			e.printStackTrace();
 		}
 		
-		return -1; //
+		return -1; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
 	}
 	
-	public Log getLog(int logID) {
-		String SQL = "SELECT * FROM LOG WHERE logID = ?";
+	public Check getCheck(int checkID) {
+		String SQL = "SELECT * FROM CHECK WHERE checkID = ?";
 		AccountDAO accountDAO = new AccountDAO();
 		
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, logID);
+			pstmt.setInt(1, checkID);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				Log log = new Log();
-				log.setLogID(rs.getInt(1));
-				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
-				log.setLatitude(rs.getString(3));
-				log.setLongtitude(rs.getString(4));
-				log.setPulse(rs.getString(5));
-				log.setTemp(rs.getString(6));
-				log.setDate(rs.getString(7));
-				return log;
+				Check check = new Check();
+				check.setCheckID(rs.getInt(1));
+				check.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				check.setLatitude(rs.getString(3));
+				check.setLongtitude(rs.getString(4));
+				check.setPulse(rs.getString(5));
+				check.setTemp(rs.getString(6));
+				check.setDate(rs.getString(7));
+				return check;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -77,7 +77,7 @@ public class LogDAO {
 	}
 	
 	public String getDate() {
-		String SQL = "SELECT NOW()";  //
+		String SQL = "SELECT NOW()";  //�쁽�옱�쓽 �떆媛꾩?�� 媛��졇�삤�뒗 MySQL�쓽 ?��몄옣
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -90,11 +90,11 @@ public class LogDAO {
 			e.printStackTrace();
 		}
 		
-		return ""; //
+		return ""; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
 	}
 	
 	public int getNext() {
-		String SQL = "SELECT logID FROM LOG ORDER BY logID DESC"; 
+		String SQL = "SELECT checkID FROM CHECK ORDER BY checkID DESC"; 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -105,13 +105,13 @@ public class LogDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // 
+		return -1; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
 	}
 	
-	public ArrayList<Log> getList(int pageNumber)
+	public ArrayList<Check> getList(int pageNumber)
 	{
-		String SQL = "SELECT * FROM LOG WHERE logID < ? ORDER BY logID DESC LIMIT 10";
-		ArrayList<Log> list = new ArrayList<Log>();
+		String SQL = "SELECT * FROM CHECK WHERE checkID < ? ORDER BY checkID DESC LIMIT 10";
+		ArrayList<Check> list = new ArrayList<Check>();
 		AccountDAO accountDAO = new AccountDAO();
 		
 		try {
@@ -119,15 +119,15 @@ public class LogDAO {
 			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				Log log = new Log();
-				log.setLogID(rs.getInt(1));
-				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
-				log.setLatitude(rs.getString(3));
-				log.setLongtitude(rs.getString(4));
-				log.setPulse(rs.getString(5));
-				log.setTemp(rs.getString(6));
-				log.setDate(rs.getString(7));
-				list.add(log);
+				Check check = new Check();
+				check.setCheckID(rs.getInt(1));
+				check.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				check.setLatitude(rs.getString(3));
+				check.setLongtitude(rs.getString(4));
+				check.setPulse(rs.getString(5));
+				check.setTemp(rs.getString(6));
+				check.setDate(rs.getString(7));
+				list.add(check);
 
 			}
 		} catch (Exception e) {
@@ -137,7 +137,7 @@ public class LogDAO {
 	}
 	
 	public boolean nextPage(int pageNumber) {
-		String SQL = "SELECT logID FROM Log WHERE logID < ?";
+		String SQL = "SELECT checkID FROM Check WHERE checkID < ?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
@@ -152,33 +152,33 @@ public class LogDAO {
 		return false;
 	}
 	
-	public Log getMaxLog(String accountID) {
-		String SQL = "SELECT * FROM LOG WHERE ACCOUNTINFO = ? ORDER BY LOGID DESC LIMIT 1";
+	public Check getMaxCheck(String accountID) {
+		String SQL = "SELECT * FROM CHECK WHERE ACCOUNTINFO = ? ORDER BY CHECKID DESC LIMIT 1";
 		AccountDAO accountDAO = new AccountDAO();
-		Log log = new Log();
+		Check check = new Check();
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, accountID);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				log.setLogID(rs.getInt(1));
-				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
-				log.setLatitude(rs.getString(3));
-				log.setLongtitude(rs.getString(4));
-				log.setPulse(rs.getString(5));
-				log.setTemp(rs.getString(6));
-				log.setDate(rs.getString(7));
+				check.setCheckID(rs.getInt(1));
+				check.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				check.setLatitude(rs.getString(3));
+				check.setLongtitude(rs.getString(4));
+				check.setPulse(rs.getString(5));
+				check.setTemp(rs.getString(6));
+				check.setDate(rs.getString(7));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return log; 
+		return check; 
 		
 	}
 	
 
 	public static void main(String[] args) {
-		new LogDAO();
+		new CheckDAO();
 	}
 	
 
