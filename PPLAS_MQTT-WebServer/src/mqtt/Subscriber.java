@@ -170,23 +170,23 @@ public class Subscriber implements MqttCallback {
 	 */
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		// Message 형태 : "맥박%체온%경도:위도"
-		
+
 		AccountDAO acDAO = new AccountDAO();
 		HospitalDAO hospitalDAO = new HospitalDAO();
 		ArrayList<Hospital> hospitalList = hospitalDAO.getList();
 		int NearestHospitalIndex = 0;
-		
+
 		String topicSplit[] = topic.split("/"); // user/patient/id 에서 id를 짜름
-		String id = topicSplit[2];	//account id저장
+		String id = topicSplit[2]; // account id저장
 		account = acDAO.getInfo(id); // account테이블로부터 해당 id로 account객체 리딩
 		String arr[] = message.toString().split("%"); // 메시지 분리
-		String pulse = arr[0];	// 맥박 저장
-		String temp = arr[1];	// 체온 저장
-		String locationArr[] = arr[2].split(":");	// 위도, 경도 분리
-		String latitude = locationArr[0];	// 위도(latitude) 저장
-		String longitude = locationArr[1];	// 경도(longitude) 저장
+		String pulse = arr[0]; // 맥박 저장
+		String temp = arr[1]; // 체온 저장
+		String locationArr[] = arr[2].split(":"); // 위도, 경도 분리
+		String latitude = locationArr[0]; // 위도(latitude) 저장
+		String longitude = locationArr[1]; // 경도(longitude) 저장
 
-		NearestHospitalIndex = findNearestHospital(hospitalDAO, hospitalList, latitude, longitude);	// 가장 가까운 병원 결정
+		NearestHospitalIndex = findNearestHospital(hospitalDAO, hospitalList, latitude, longitude); // 가장 가까운 병원 결정
 
 		///////////////////////////////////// 확인을 위한 출력 문구
 		///////////////////////////////////// /////////////////////////////////////////////
@@ -214,6 +214,13 @@ public class Subscriber implements MqttCallback {
 				// 해당 토픽의 데이터가 해쉬맵에 없다면
 				emergencyJudgment.put(topic, 1); // 해당 토픽으로 데이터 생성
 				System.out.println(topic + " 환자(신규) :" + emergencyJudgment.get(topic));
+
+				new java.util.Timer().schedule(new java.util.TimerTask() {
+					@Override
+					public void run() {
+						emergencyJudgment.remove(topic);
+					}
+				}, 8000 /* 1분이 경과하면 해당 해쉬데이터 삭제 */);
 			}
 
 			if (emergencyJudgment.get(topic) >= 5) {
@@ -231,7 +238,7 @@ public class Subscriber implements MqttCallback {
 				 */
 
 				System.out.println("로그 생성");
-
+				emergencyJudgment.remove(topic);
 			}
 
 		} else {
@@ -239,10 +246,11 @@ public class Subscriber implements MqttCallback {
 		}
 
 	}
-	
-	public int findNearestHospital(HospitalDAO hospitalDAO, ArrayList<Hospital> hospitalList, String latitude, String longitude) {
-		LocationDistance calculator = new LocationDistance();
 
+	public int findNearestHospital(HospitalDAO hospitalDAO, ArrayList<Hospital> hospitalList, String latitude,
+			String longitude) {
+		// 가장 가까운 병원 계산 메소드
+		LocationDistance calculator = new LocationDistance();
 		int index = 0;
 		double min = 999999;
 		for (int i = 0; i < hospitalList.size(); i++) {
@@ -263,9 +271,7 @@ public class Subscriber implements MqttCallback {
 					index = i;
 				}
 			}
-
 		}
-		
 		return index;
 	}
 
