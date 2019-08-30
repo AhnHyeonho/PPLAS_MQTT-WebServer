@@ -16,12 +16,18 @@
 <body>
 	<%
 		String accountID = null;
-		if(session.getAttribute("accountID") != null){
+		if (session.getAttribute("accountID") != null) {
 			accountID = (String) session.getAttribute("accountID");
 		}
 		int pageNumber = 1;
-		if(request.getParameter("pageNumber") != null)
-		{
+		if (accountID == null || !(accountID.equals("admin"))) {
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('관리자 로그인이 필요합니다.')");
+			script.println("location.href = 'main.jsp'");
+			script.println("</script>");
+		}
+		if (request.getParameter("pageNumber") != null) {
 			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 		}
 	%>
