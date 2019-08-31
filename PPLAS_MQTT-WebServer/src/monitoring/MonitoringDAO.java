@@ -1,4 +1,4 @@
-package check;
+package monitoring;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,13 +11,13 @@ import location.Location;
 import account.Account;
 import account.AccountDAO;
 
-public class CheckDAO {
+public class MonitoringDAO {
 
 	private Connection conn;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
 	
-	public CheckDAO() {
+	public MonitoringDAO() {
 		try {
 			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
 			String dbID = "root";
@@ -31,7 +31,7 @@ public class CheckDAO {
 	}
 	
 	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
-		String SQL = "INSERT INTO CHECK VALUES (?, ?, ?, ?, ?, ?, ?)";  //�쁽�옱�쓽 �떆媛꾩?�� 媛��졇�삤�뒗 MySQL�쓽 ?��몄옣
+		String SQL = "INSERT INTO MONITORING VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext());
@@ -48,27 +48,27 @@ public class CheckDAO {
 			e.printStackTrace();
 		}
 		
-		return -1; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
+		return -1;
 	}
 	
-	public Check getCheck(int checkID) {
-		String SQL = "SELECT * FROM CHECK WHERE checkID = ?";
+	public Monitoring getMonitoring(int monitoringID) {
+		String SQL = "SELECT * FROM MONITORING WHERE monitoringID = ?";
 		AccountDAO accountDAO = new AccountDAO();
 		
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, checkID);
+			pstmt.setInt(1, monitoringID);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				Check check = new Check();
-				check.setCheckID(rs.getInt(1));
-				check.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
-				check.setLatitude(rs.getString(3));
-				check.setLongtitude(rs.getString(4));
-				check.setPulse(rs.getString(5));
-				check.setTemp(rs.getString(6));
-				check.setDate(rs.getString(7));
-				return check;
+				Monitoring monitoring = new Monitoring();
+				monitoring.setMonitoringID(rs.getInt(1));
+				monitoring.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				monitoring.setLatitude(rs.getString(3));
+				monitoring.setLongtitude(rs.getString(4));
+				monitoring.setPulse(rs.getString(5));
+				monitoring.setTemp(rs.getString(6));
+				monitoring.setDate(rs.getString(7));
+				return monitoring;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -77,7 +77,7 @@ public class CheckDAO {
 	}
 	
 	public String getDate() {
-		String SQL = "SELECT NOW()";  //�쁽�옱�쓽 �떆媛꾩?�� 媛��졇�삤�뒗 MySQL�쓽 ?��몄옣
+		String SQL = "SELECT NOW()";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -90,11 +90,11 @@ public class CheckDAO {
 			e.printStackTrace();
 		}
 		
-		return ""; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
+		return "";
 	}
 	
 	public int getNext() {
-		String SQL = "SELECT checkID FROM CHECK ORDER BY checkID DESC"; 
+		String SQL = "SELECT monitoringID FROM MONITORING ORDER BY monitoringID DESC"; 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -105,13 +105,13 @@ public class CheckDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; //�뜲�씠�꽣踰좎?���뒪 �삤?���?
+		return -1;
 	}
 	
-	public ArrayList<Check> getList(int pageNumber)
+	public ArrayList<Monitoring> getList(int pageNumber)
 	{
-		String SQL = "SELECT * FROM CHECK WHERE checkID < ? ORDER BY checkID DESC LIMIT 10";
-		ArrayList<Check> list = new ArrayList<Check>();
+		String SQL = "SELECT * FROM MONITORING WHERE monitoringID < ? ORDER BY monitoringID DESC LIMIT 10";
+		ArrayList<Monitoring> list = new ArrayList<Monitoring>();
 		AccountDAO accountDAO = new AccountDAO();
 		
 		try {
@@ -119,15 +119,15 @@ public class CheckDAO {
 			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				Check check = new Check();
-				check.setCheckID(rs.getInt(1));
-				check.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
-				check.setLatitude(rs.getString(3));
-				check.setLongtitude(rs.getString(4));
-				check.setPulse(rs.getString(5));
-				check.setTemp(rs.getString(6));
-				check.setDate(rs.getString(7));
-				list.add(check);
+				Monitoring monitoring = new Monitoring();
+				monitoring.setMonitoringID(rs.getInt(1));
+				monitoring.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				monitoring.setLatitude(rs.getString(3));
+				monitoring.setLongtitude(rs.getString(4));
+				monitoring.setPulse(rs.getString(5));
+				monitoring.setTemp(rs.getString(6));
+				monitoring.setDate(rs.getString(7));
+				list.add(monitoring);
 
 			}
 		} catch (Exception e) {
@@ -137,7 +137,7 @@ public class CheckDAO {
 	}
 	
 	public boolean nextPage(int pageNumber) {
-		String SQL = "SELECT checkID FROM Check WHERE checkID < ?";
+		String SQL = "SELECT monitoringID FROM MONITORING WHERE monitoringID < ?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
@@ -152,33 +152,33 @@ public class CheckDAO {
 		return false;
 	}
 	
-	public Check getMaxCheck(String accountID) {
-		String SQL = "SELECT * FROM CHECK WHERE ACCOUNTINFO = ? ORDER BY CHECKID DESC LIMIT 1";
+	public Monitoring getMaxMonitoring(String accountID) {
+		String SQL = "SELECT * FROM MONITORING WHERE ACCOUNTINFO = ? ORDER BY monitoringID DESC LIMIT 1";
 		AccountDAO accountDAO = new AccountDAO();
-		Check check = new Check();
+		Monitoring monitoring = new Monitoring();
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, accountID);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				check.setCheckID(rs.getInt(1));
-				check.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
-				check.setLatitude(rs.getString(3));
-				check.setLongtitude(rs.getString(4));
-				check.setPulse(rs.getString(5));
-				check.setTemp(rs.getString(6));
-				check.setDate(rs.getString(7));
+				monitoring.setMonitoringID(rs.getInt(1));
+				monitoring.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
+				monitoring.setLatitude(rs.getString(3));
+				monitoring.setLongtitude(rs.getString(4));
+				monitoring.setPulse(rs.getString(5));
+				monitoring.setTemp(rs.getString(6));
+				monitoring.setDate(rs.getString(7));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return check; 
+		return monitoring; 
 		
 	}
 	
 
 	public static void main(String[] args) {
-		new CheckDAO();
+		new MonitoringDAO();
 	}
 	
 

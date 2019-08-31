@@ -1,4 +1,4 @@
-package check;
+package monitoring;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -20,8 +20,8 @@ public class CheckSearchServlet extends HttpServlet {
 		if(acID == null || acID.equals("")) {
 			response.getWriter().write("0");
 		} else {
-			String pulse = new CheckDAO().getMaxCheck(acID).getPulse();
-			String temp = new CheckDAO().getMaxCheck(acID).getTemp();
+			String pulse = new MonitoringDAO().getMaxMonitoring(acID).getPulse();
+			String temp = new MonitoringDAO().getMaxMonitoring(acID).getTemp();
 			response.getWriter().write(String.format("{\"pulse\": %s, \"temp\": %s}", pulse, temp));
 		}
 	}

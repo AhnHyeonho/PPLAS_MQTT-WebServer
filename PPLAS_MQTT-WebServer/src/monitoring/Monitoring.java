@@ -1,21 +1,21 @@
-package check;
+package monitoring;
 
 import account.Account;
 
-public class Check {
+public class Monitoring {
 	
-	private int CheckID;
+	private int monitoringID;
 	private Account accountInfo;	// SQL로부터 받아온 환자 정보
 	private String latitude;	// 위도
 	private String longtitude; // 경도
 	private String pulse;	// 맥박
 	private String temp;	// 체온
 	private String date;
-	public int getCheckID() {
-		return CheckID;
+	public int getMonitoringID() {
+		return monitoringID;
 	}
-	public void setCheckID(int checkID) {
-		CheckID = checkID;
+	public void setMonitoringID(int monitoringID) {
+		this.monitoringID = monitoringID;
 	}
 	public Account getAccountInfo() {
 		return accountInfo;
