@@ -92,26 +92,40 @@
 				<tbody>
 					<%
 						AccountDAO accountDAO = new AccountDAO();
-						ArrayList<Account> list = accountDAO.getList();
+						ArrayList<Account> list = accountDAO.getList(pageNumber);
 
 						for (int i = 0; i < list.size(); i++) {
 							if (list.get(i).getAccountAuthority().equals("patient")) {
 					%>
-								<tr>
-									<td><%=list.get(i).getAccountID()%></td>
-									<td><a
-										href="monitoring_view.jsp?acID=<%=list.get(i).getAccountID()%>">
-											<%=list.get(i).getAccountID()%>
-									</a></td>
-									<td><%=list.get(i).getAccountName()%></td>
-									<td><%=list.get(i).getAccountPhone()%></td>
-								</tr>
+					<tr>
+						<td><%=list.get(i).getAccountID()%></td>
+						<td><a
+							href="monitoring_view.jsp?acID=<%=list.get(i).getAccountID()%>">
+								<%=list.get(i).getAccountID()%>
+						</a></td>
+						<td><%=list.get(i).getAccountName()%></td>
+						<td><%=list.get(i).getAccountPhone()%></td>
+					</tr>
 					<%
-							}
+						}
 						}
 					%>
 				</tbody>
 			</table>
+			<%
+				if (pageNumber != 1) {
+			%>
+			<a href="monitoring.jsp?pageNumber=<%=pageNumber - 1%>"
+				class="btn btn-success btn-arrow-left">이전</a>
+			<%
+				}
+				if (accountDAO.nextPage(pageNumber + 1)) {
+			%>
+			<a href="monitoring.jsp?pageNumber=<%=pageNumber + 1%>"
+				class="btn btn-success btn-arrow-right">다음</a>
+			<%
+				}
+			%>
 		</div>
 	</div>
 	<script

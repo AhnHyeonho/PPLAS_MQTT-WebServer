@@ -90,13 +90,15 @@ public class AccountDAO {
 		return account;
 	}
 	
-	public ArrayList<Account> getList()
+	public ArrayList<Account> getList(int pageNumber)
 	{
-		String SQL = "SELECT * FROM ACCOUNT ORDER BY ACCOUNTID DESC LIMIT 10";
+		String SQL = "SELECT * FROM ACCOUNT ORDER BY accountID DESC LIMIT ?, 10";
+		/* SQL문에서 LIMIT의 10은 게시글 목록을 10개씩 출력한다는 의미 */
 		ArrayList<Account> list = new ArrayList<Account>();
 		
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			 pstmt.setInt(1, (pageNumber-1)*10); 
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				Account account = new Account();
@@ -115,5 +117,36 @@ public class AccountDAO {
 		return list; 
 	}
 
+	public int getNext() {
+		String SQL = "SELECT accountID FROM ACCOUNT ORDER BY accountID DESC"; 
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1) +1;
+			}
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // 
+	}
+	
+	public boolean nextPage(int pageNumber) {
+		String SQL = "SELECT * FROM ACCOUNT ORDER BY accountID DESC LIMIT ?, 10";
+		ArrayList<Account> list = new ArrayList<Account>();
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			 pstmt.setInt(1, (pageNumber-1)*10); 
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false; 
+	}
 	
 }

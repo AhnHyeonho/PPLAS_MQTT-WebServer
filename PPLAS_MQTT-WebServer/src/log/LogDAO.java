@@ -98,6 +98,7 @@ public class LogDAO {
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
+			rs.getInt(1);
 			if(rs.next()) {
 				return rs.getInt(1) +1;
 			}
