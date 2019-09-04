@@ -117,20 +117,15 @@ public class AccountDAO {
 		return list; 
 	}
 
-	public int getNext() {
-		String SQL = "SELECT accountID FROM ACCOUNT ORDER BY accountID DESC"; 
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				return rs.getInt(1) +1;
-			}
-			return 1;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return -1; // 
-	}
+	/*
+	 * public int getNext() { String SQL =
+	 * "SELECT accountID FROM ACCOUNT ORDER BY accountID DESC"; try {
+	 * PreparedStatement pstmt = conn.prepareStatement(SQL); rs =
+	 * pstmt.executeQuery(); if(rs.next()) { return rs.getInt(1) +1; } return 1; }
+	 * catch (Exception e) { e.printStackTrace(); } return -1; // }
+	 */
+	/*getNext()날려도되겠는데..?*/
+	
 	
 	public boolean nextPage(int pageNumber) {
 		String SQL = "SELECT * FROM ACCOUNT ORDER BY accountID DESC LIMIT ?, 10";
