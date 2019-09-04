@@ -16,7 +16,7 @@ public class MonitoringDAO {
 	private Connection conn;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
-	
+
 	public MonitoringDAO() {
 		try {
 			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
@@ -24,12 +24,12 @@ public class MonitoringDAO {
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
-			
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
 		String SQL = "INSERT INTO MONITORING VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try {
@@ -42,24 +42,23 @@ public class MonitoringDAO {
 			pstmt.setString(6, temp);
 			pstmt.setString(7, getDate());
 			return pstmt.executeUpdate();
-			
-		} catch (Exception e)
-		{
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return -1;
 	}
-	
+
 	public Monitoring getMonitoring(int monitoringID) {
 		String SQL = "SELECT * FROM MONITORING WHERE monitoringID = ?";
 		AccountDAO accountDAO = new AccountDAO();
-		
+
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, monitoringID);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				Monitoring monitoring = new Monitoring();
 				monitoring.setMonitoringID(rs.getInt(1));
 				monitoring.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
@@ -75,31 +74,30 @@ public class MonitoringDAO {
 		}
 		return null;
 	}
-	
+
 	public String getDate() {
 		String SQL = "SELECT NOW()";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				return rs.getString(1);
 			}
-			
-		} catch (Exception e)
-		{
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return "";
 	}
-	
+
 	public int getNext() {
-		String SQL = "SELECT monitoringID FROM MONITORING ORDER BY monitoringID DESC"; 
+		String SQL = "SELECT monitoringID FROM MONITORING ORDER BY monitoringID DESC";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				return rs.getInt(1) +1;
+			if (rs.next()) {
+				return rs.getInt(1) + 1;
 			}
 			return 1;
 		} catch (Exception e) {
@@ -107,18 +105,17 @@ public class MonitoringDAO {
 		}
 		return -1;
 	}
-	
-	public ArrayList<Monitoring> getList(int pageNumber)
-	{
+
+	public ArrayList<Monitoring> getList(int pageNumber) {
 		String SQL = "SELECT * FROM MONITORING WHERE monitoringID < ? ORDER BY monitoringID DESC LIMIT 10";
 		ArrayList<Monitoring> list = new ArrayList<Monitoring>();
 		AccountDAO accountDAO = new AccountDAO();
-		
+
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
+			pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				Monitoring monitoring = new Monitoring();
 				monitoring.setMonitoringID(rs.getInt(1));
 				monitoring.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
@@ -133,17 +130,17 @@ public class MonitoringDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return list; 
+		return list;
 	}
-	
+
 	public boolean nextPage(int pageNumber) {
 		String SQL = "SELECT monitoringID FROM MONITORING WHERE monitoringID < ?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
+			pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -151,7 +148,7 @@ public class MonitoringDAO {
 		}
 		return false;
 	}
-	
+
 	public Monitoring getMaxMonitoring(String accountID) {
 		String SQL = "SELECT * FROM MONITORING WHERE ACCOUNTINFO = ? ORDER BY monitoringID DESC LIMIT 1";
 		AccountDAO accountDAO = new AccountDAO();
@@ -160,7 +157,7 @@ public class MonitoringDAO {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, accountID);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				monitoring.setMonitoringID(rs.getInt(1));
 				monitoring.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
 				monitoring.setLatitude(rs.getString(3));
@@ -172,15 +169,6 @@ public class MonitoringDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return monitoring; 
-		
+		return monitoring;
 	}
-	
-
-	public static void main(String[] args) {
-		new MonitoringDAO();
-	}
-	
-
-	
 }

@@ -45,7 +45,7 @@
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				<li class="acitve"><a href="log.jsp">로그</a></li>
+				<li class="active"><a href="log.jsp">로그</a></li>
 				<li><a href="monitoring.jsp">실시간 모니터링</a>
 			</ul>
 			<%
@@ -125,9 +125,6 @@
 				}
 			%>
 
-
-
-			<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>
 	</div>
 	<script

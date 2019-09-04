@@ -16,7 +16,7 @@ public class LogDAO {
 	private Connection conn;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
-	
+
 	public LogDAO() {
 		try {
 			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
@@ -24,42 +24,41 @@ public class LogDAO {
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
-			
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
-		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?, ?)";  // 
+
+	public int store(Log log) {
+		String SQL = "INSERT INTO LOG VALUES (?, ?, ?, ?, ?, ?, ?)"; //
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext());
-			pstmt.setString(2, accountID);
-			pstmt.setString(3, latitude);
-			pstmt.setString(4, longtitude);
-			pstmt.setString(5, pulse);
-			pstmt.setString(6, temp);
+			pstmt.setString(2, log.getAccountInfo().getAccountID());
+			pstmt.setString(3, log.getLatitude());
+			pstmt.setString(4, log.getLongtitude());
+			pstmt.setString(5, log.getPulse());
+			pstmt.setString(6, log.getTemp());
 			pstmt.setString(7, getDate());
 			return pstmt.executeUpdate();
-			
-		} catch (Exception e)
-		{
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return -1; //
 	}
-	
+
 	public Log getLog(int logID) {
 		String SQL = "SELECT * FROM LOG WHERE logID = ?";
 		AccountDAO accountDAO = new AccountDAO();
-		
+
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, logID);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				Log log = new Log();
 				log.setLogID(rs.getInt(1));
 				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
@@ -75,53 +74,48 @@ public class LogDAO {
 		}
 		return null;
 	}
-	
+
 	public String getDate() {
-		String SQL = "SELECT NOW()";  //
+		String SQL = "SELECT NOW()"; //
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				return rs.getString(1);
 			}
-			
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return ""; //
 	}
-	
 
 	public int getNext() {
 		String SQL = "SELECT logID FROM LOG ORDER BY logID DESC";
-		
+
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				return rs.getInt(1) + 1;
 			}
-			return 1; 	// 첫 번째 게시물인 경우
-		} catch(Exception e) {
+			return 1; // 첫 번째 게시물인 경우
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return -1; // 데이터베이스 오류
 	}
-	
-	
-	public ArrayList<Log> getList(int pageNumber)
-	{
+
+	public ArrayList<Log> getList(int pageNumber) {
 		String SQL = "SELECT * FROM LOG WHERE logID < ? ORDER BY logID DESC LIMIT 10";
 		ArrayList<Log> list = new ArrayList<Log>();
 		AccountDAO accountDAO = new AccountDAO();
-		
+
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
+			pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				Log log = new Log();
 				log.setLogID(rs.getInt(1));
 				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
@@ -136,17 +130,17 @@ public class LogDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return list; 
+		return list;
 	}
-	
+
 	public boolean nextPage(int pageNumber) {
 		String SQL = "SELECT logID FROM Log WHERE logID < ?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, getNext() - (pageNumber -1) * 10);
+			pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -154,7 +148,7 @@ public class LogDAO {
 		}
 		return false;
 	}
-	
+
 	public Log getMaxLog(String accountID) {
 		String SQL = "SELECT * FROM LOG WHERE ACCOUNTINFO = ? ORDER BY LOGID DESC LIMIT 1";
 		AccountDAO accountDAO = new AccountDAO();
@@ -163,7 +157,7 @@ public class LogDAO {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, accountID);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				log.setLogID(rs.getInt(1));
 				log.setAccountInfo((accountDAO.getInfo(rs.getString(2))));
 				log.setLatitude(rs.getString(3));
@@ -175,15 +169,6 @@ public class LogDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return log; 
-		
+		return log;
 	}
-	
-
-	public static void main(String[] args) {
-		new LogDAO();
-	}
-	
-
-	
 }

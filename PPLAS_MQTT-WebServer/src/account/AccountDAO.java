@@ -89,13 +89,14 @@ public class AccountDAO {
 	}
 
 	public ArrayList<Account> getList(int pageNumber) {
-		String SQL = "SELECT * FROM ACCOUNT ORDER BY accountID DESC LIMIT ?, 10";
+		String SQL = "SELECT * FROM ACCOUNT WHERE ACCOUNTAUTHORITY = 'PATIENT' ORDER BY accountID ASC LIMIT ?, 10;";
 		/* SQL문에서 LIMIT의 10은 게시글 목록을 10개씩 출력한다는 의미 */
 		ArrayList<Account> list = new ArrayList<Account>();
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, (pageNumber - 1) * 10);
+			int startNum = (pageNumber - 1) * 10;
+			pstmt.setInt(1, startNum);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Account account = new Account();
@@ -115,7 +116,7 @@ public class AccountDAO {
 	}
 
 	public int getNext() {
-		String SQL = "SELECT accountID FROM ACCOUNT ORDER BY accountID DESC";
+		String SQL = "SELECT accountID FROM ACCOUNT ORDER BY accountID ASC";
 		
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);

@@ -190,7 +190,7 @@ public class Subscriber implements MqttCallback {
 
 		///////////////////////////////////// 확인을 위한 출력 문구
 		///////////////////////////////////// /////////////////////////////////////////////
-		System.out.println("Mqtt topic : " + topic);
+		System.out.println("Mqtt topic : " + id);
 		System.out.println("Mqtt msg : " + message.toString());
 		System.out.println(topicSplit[2]);
 		System.out.println(arr[0]);
@@ -206,39 +206,43 @@ public class Subscriber implements MqttCallback {
 		if ((Float.parseFloat(temp) > 38 || Float.parseFloat(temp) < 36)
 				|| (Float.parseFloat(pulse) < 60 || Float.parseFloat(pulse) > 100)) {
 			// 이상 증상으로 예상되는 mqtt 메시지 도착
-			if (emergencyJudgment.containsKey(topic)) {
+			if (emergencyJudgment.containsKey(id)) {
 				// 해당 토픽의 데이터가 해쉬맵에 있다면
-				emergencyJudgment.replace(topic, emergencyJudgment.get(topic) + 1);
-				System.out.println(topic + " 환자(기존) :" + emergencyJudgment.get(topic));
+				emergencyJudgment.replace(id, emergencyJudgment.get(id) + 1);
+				System.out.println(id + " 환자(기존) :" + emergencyJudgment.get(id));
 			} else {
 				// 해당 토픽의 데이터가 해쉬맵에 없다면
-				emergencyJudgment.put(topic, 1); // 해당 토픽으로 데이터 생성
-				System.out.println(topic + " 환자(신규) :" + emergencyJudgment.get(topic));
+				emergencyJudgment.put(id, 1); // 해당 토픽으로 데이터 생성
+				System.out.println(topic + " 환자(신규) :" + emergencyJudgment.get(id));
 
 				new java.util.Timer().schedule(new java.util.TimerTask() {
 					@Override
 					public void run() {
-						emergencyJudgment.remove(topic);
+						if (emergencyJudgment.containsKey(id)) {
+							/*만약 로그가 생성되어 해당 해쉬가 삭제되었을 수도 있기 때문에*/
+							emergencyJudgment.remove(id);
+						}
 					}
-				}, 8000 /* 1분이 경과하면 해당 해쉬데이터 삭제 */);
+				}, 10000 /* 1분이 경과하면 해당 해쉬데이터 삭제, 1000당 1초 */);
 			}
 
-			if (emergencyJudgment.get(topic) >= 5) {
+			if (emergencyJudgment.get(id) >= 5) {
 				// 응급상황 알고리즘 : 응급상황이 지속되면 count가 쌓이다가 5번정도 지속이 되면 log 정보를 기록하고 구조대에게 publish 한다
 				// 응급상황일 경우 데이터베이스에 로그정보를 저장한다
 
-				/*
-				 * Log log = new Log();
-				 * 
-				 * log.setAccountInfo(account); log.setPulse(pulse); log.setTemp(temp);
-				 * log.setLatitude(latitude); log.setLongtitude(longtitude);
-				 * 
-				 * LogDAO logDAO = new LogDAO(); logDAO.store(id, latitude, longtitude, pulse,
-				 * temp);
-				 */
+				Log log = new Log();
+
+				log.setAccountInfo(account);
+				log.setPulse(pulse);
+				log.setTemp(temp);
+				log.setLatitude(latitude);
+				log.setLongtitude(longitude);
+
+				LogDAO logDAO = new LogDAO();
+				logDAO.store(log);
 
 				System.out.println("로그 생성");
-				emergencyJudgment.remove(topic);
+				emergencyJudgment.remove(id);
 			}
 
 		} else {
