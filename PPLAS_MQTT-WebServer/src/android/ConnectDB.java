@@ -17,7 +17,7 @@ public class ConnectDB {
 	
 	private String jdbcUrl = "jdbc:mysql://localhost:3306/pplas?characterEncoding=UTF-8&serverTimezone=UTC"; // MySQL 계정 "jdbc:mysql://localhost:3306/DB이름"
 	private String dbID = "root"; // MySQL 계정 "로컬일 경우 root"
-	private String dbPW = "qkr75886"; // 비밀번호 "mysql 설치 시 설정한 비밀번호"
+	private String dbPW = "1234"; // 비밀번호 "mysql 설치 시 설정한 비밀번호"
 	
 	private Connection conn = null;
 	private PreparedStatement pstmt = null;
@@ -35,7 +35,7 @@ public class ConnectDB {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(jdbcUrl, dbID, dbPW);
 			
-			sql = "select * from account where resident_id=?";
+			sql = "select * from account where accountResidentID=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, resident_id);
 			rs = pstmt.executeQuery();
@@ -43,14 +43,15 @@ public class ConnectDB {
 			if(rs.next()) {		//해당 주민번호로 이미 계정이 존재.
 				returns = "imposible";
 			}else {
-				sql = "select * from account where id=?";
+				sql = "select * from account where accountID=?";
 				pstmt2 = conn.prepareStatement(sql);
 				pstmt2.setString(1, id);
 				rs = pstmt2.executeQuery();
 				if(rs.next()) {		//해당 아이디가 이미 존재
 					returns="exist";
 				}else {
-					sql = "insert into account(id,pw,name,resident_id,phone,authority) values(?,?,?,?,?,?)";
+					sql = "insert into account(accountID,accountPassword,accountName,"
+							+ "accountResidentID,accountPhone,accountAuthority) values(?,?,?,?,?,?)";
 					pstmt3 = conn.prepareStatement(sql);
 					pstmt3.setString(1, id);
 					pstmt3.setString(2, pw);
@@ -79,14 +80,14 @@ public class ConnectDB {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(jdbcUrl, dbID, dbPW);
 			
-			sql = "select * from account where id=? and authority=?";
+			sql = "select * from account where accountID=? and accountAuthority=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			pstmt.setString(2, authority);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {//아이디, 권한 일치
-				if(rs.getString("pw").equals(pw)) {	//비밀번호도 일치
+				if(rs.getString("accountPassword").equals(pw)) {	//비밀번호도 일치
 					returns = "loginOK";
 				}
 				else {	//비밀번호 불일치
@@ -112,13 +113,13 @@ public class ConnectDB {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(jdbcUrl,dbID,dbPW);
 			
-			sql = "select * from account where id=?";
+			sql = "select * from account where accountID=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				name = rs.getString("name");
+				name = rs.getString("accountName");
 				returns = "findName="+name;
 			} else {
 				returns = "error1";		//스마트 밴드와 연동 오류

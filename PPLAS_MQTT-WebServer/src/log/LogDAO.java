@@ -93,21 +93,23 @@ public class LogDAO {
 		return ""; //
 	}
 	
+
 	public int getNext() {
-		String SQL = "SELECT logID FROM LOG ORDER BY logID DESC"; 
+		String SQL = "SELECT logID FROM LOG ORDER BY logID DESC";
+		
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
-			rs.getInt(1);
 			if(rs.next()) {
-				return rs.getInt(1) +1;
+				return rs.getInt(1) + 1;
 			}
-			return 1;
-		} catch (Exception e) {
+			return 1; 	// 첫 번째 게시물인 경우
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // 
+		return -1; // 데이터베이스 오류
 	}
+	
 	
 	public ArrayList<Log> getList(int pageNumber)
 	{
