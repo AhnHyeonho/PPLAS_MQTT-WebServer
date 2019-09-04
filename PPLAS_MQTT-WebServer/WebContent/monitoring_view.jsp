@@ -114,16 +114,29 @@
 					</tr>
 				</tbody>
 			</table>
-			<div style="width: 50%;">
+			<div style="width: 100%;">
 				<canvas id="mycanvas"></canvas>
 			</div>
 		</div>
 	</div>
+	
+<script type="text/javascript">	
+function deleteline(){
+	if(myChart.data.datasets[0].data.length > 10 && myChart.data.datasets[1].data.length > 10){
+		
+		myChart.data.datasets.forEach(function(a) {
+			a.data.shift();
+		});
+		myChart.data.labels.shift();
+	}
+}	
+</script>	
+	
 	<script type="text/javascript">
   						
+	
 function searchFunction() {
-  	var acID = "<%=acID%>
-				";
+  	var acID = "<%=acID%>";
 					$.ajax({
 						type : "POST",
 						dataType : "json",
@@ -140,11 +153,11 @@ function searchFunction() {
 									+ (now.getMinutes() < 10 ? '0' : '')
 									+ now.getMinutes()
 									+ ":"
-									+ (now.getSeconds() < 10 ? '0' : ''
-											+ now.getSeconds()));
+									+ (now.getSeconds() < 10 ? '0' : '')
+											+ now.getSeconds());
 							myChart.data.datasets[0].data.push(data.pulse);
 							myChart.data.datasets[1].data.push(data.temp);
-
+							deleteline();
 							myChart.update();
 						},
 						error : function(error) {
@@ -180,6 +193,7 @@ function searchFunction() {
 						},
 						scales : {
 							yAxes : [ {
+								gridLines : false,
 								ticks : {
 									beginAtZero : true,
 								}
@@ -188,7 +202,7 @@ function searchFunction() {
 					}
 				});
 
-				var func = setInterval(searchFunction, 5000);
+				var func = setInterval(searchFunction, 2000);
 			</script>
 	<button onclick="clearInterval(func);">멈춰</button>
 
