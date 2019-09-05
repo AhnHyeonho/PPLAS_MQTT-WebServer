@@ -244,12 +244,16 @@ public class Subscriber implements MqttCallback {
 					log.setTemp(temp);
 					log.setLatitude(latitude);
 					log.setLongtitude(longitude);
+
 					LogDAO logDAO = new LogDAO(); /* 해당 정보로 log데이터 생성 */
+					logDAO.store(log);	// 신고 로그 생성
+					System.out.println("gg");
 					///////////////////////////////////////////////////////////////////////////////////////
 					/*!여기서 문자가 발송되어야하는데 자꾸 멈춤. 수정해야함*/
-					SendMessageLMS.sendSMS(log); /*신고 메시지 발송*/
+					SendMessageLMS sendLms = new SendMessageLMS(); /*신고 메시지 발송*/
+					sendLms.sendSMS();
 					///////////////////////////////////////////////////////////////////////////////////////
-					logDAO.store(log);	// 신고 로그 생성
+
 					System.out.println("로그 생성"); // 신고 로그 생성
 					
 					emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제

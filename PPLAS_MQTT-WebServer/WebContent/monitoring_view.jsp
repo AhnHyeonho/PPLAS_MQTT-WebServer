@@ -202,9 +202,15 @@ function searchFunction() {
 					}
 				});
 
+
 				var func = setInterval(searchFunction, 2000);
+
+function view_monitoring() {
+	clearInterval(func);
+	location.href = 'monitoring.jsp';
+}				
 			</script>
-	<button onclick="clearInterval(func);">멈춰</button>
+	<button class="btn btn-success btn-arrow-left" onclick="view_monitoring();">목록</button>
 
 	<script
 		src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
