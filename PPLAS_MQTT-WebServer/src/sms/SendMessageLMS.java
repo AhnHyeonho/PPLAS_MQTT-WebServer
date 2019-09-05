@@ -29,7 +29,7 @@ public class SendMessageLMS {
         		"- from 구해줘 -*/
     	
         Call<MessageModel> api = APIInit.getAPI().sendMessage(APIInit.getHeaders(), message);
-        api.enqueue(new Callback<MessageModel>() {
+        api.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<MessageModel> call, Response<MessageModel> response) {
                 // 성공 시 200이 출력됩니다.
@@ -52,11 +52,12 @@ public class SendMessageLMS {
                     }
                 }
             }
-
             @Override
             public void onFailure(Call<MessageModel> call, Throwable throwable) {
                 throwable.printStackTrace();
             }
         });
+
     }
+
 }
