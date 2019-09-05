@@ -34,10 +34,7 @@ public class Subscriber implements MqttCallback {
 	/** The client id. */
 	private String topic;
 	/** The topic. */
-	private Hospital nearestHospital;
 	private Account account;
-	private int count;//////////////////////////////////////////////////////////
-	private Publisher publisher;
 	private HashMap<String, Integer> emergencyJudgment;
 	private HashMap<String, Integer> reportStatus;
 
@@ -69,7 +66,6 @@ public class Subscriber implements MqttCallback {
 		super();
 		emergencyJudgment = new HashMap<String, Integer>(); // 응급상황판단 해쉬맵 생성
 		reportStatus = new HashMap<String, Integer>(); // 신고현황 해쉬맵 생성
-		count = 0; //////////////////////////////////////////////////////////
 	} // default constructor
 
 	public Subscriber(String brokerUrl, String clientId, String topic) {
@@ -79,7 +75,6 @@ public class Subscriber implements MqttCallback {
 		this.topic = topic;
 		emergencyJudgment = new HashMap<String, Integer>(); // 응급상황판단 해쉬맵 생성
 		reportStatus = new HashMap<String, Integer>(); // 신고현황 해쉬맵 생성
-		count = 0; //////////////////////////////////////////////////////////
 	}
 
 	public void subscribe() {
@@ -246,6 +241,7 @@ public class Subscriber implements MqttCallback {
 					log.setLongtitude(longitude);
 
 					LogDAO logDAO = new LogDAO(); /* 해당 정보로 log데이터 생성 */
+<<<<<<< HEAD
 					logDAO.store(log); // 신고 로그 생성
 					System.out.println("gg");
 					///////////////////////////////////////////////////////////////////////////////////////
@@ -255,6 +251,12 @@ public class Subscriber implements MqttCallback {
 					///////////////////////////////////////////////////////////////////////////////////////
 
 					System.out.println("로그 생성"); // 신고 로그 생성
+=======
+
+					logDAO.store(log); // 신고 로그 생성
+					System.out.println("로그 생성"); // 신고 로그 생성
+					SendMessageLMS.sendLMS(log); /* 신고 메시지 발송 */
+>>>>>>> master
 
 					emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제
 					reportStatus.put(id, 1); // 신고가 되었으므로 신고현황 해쉬에 추가
