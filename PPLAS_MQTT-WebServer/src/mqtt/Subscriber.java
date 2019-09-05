@@ -34,10 +34,7 @@ public class Subscriber implements MqttCallback {
 	/** The client id. */
 	private String topic;
 	/** The topic. */
-	private Hospital nearestHospital;
 	private Account account;
-	private int count;//////////////////////////////////////////////////////////
-	private Publisher publisher;
 	private HashMap<String, Integer> emergencyJudgment;
 	private HashMap<String, Integer> reportStatus;
 
@@ -69,7 +66,6 @@ public class Subscriber implements MqttCallback {
 		super();
 		emergencyJudgment = new HashMap<String, Integer>(); // 응급상황판단 해쉬맵 생성
 		reportStatus = new HashMap<String, Integer>(); // 신고현황 해쉬맵 생성
-		count = 0; //////////////////////////////////////////////////////////
 	} // default constructor
 
 	public Subscriber(String brokerUrl, String clientId, String topic) {
@@ -79,7 +75,6 @@ public class Subscriber implements MqttCallback {
 		this.topic = topic;
 		emergencyJudgment = new HashMap<String, Integer>(); // 응급상황판단 해쉬맵 생성
 		reportStatus = new HashMap<String, Integer>(); // 신고현황 해쉬맵 생성
-		count = 0; //////////////////////////////////////////////////////////
 	}
 
 	public void subscribe() {
@@ -245,13 +240,11 @@ public class Subscriber implements MqttCallback {
 					log.setLatitude(latitude);
 					log.setLongtitude(longitude);
 					LogDAO logDAO = new LogDAO(); /* 해당 정보로 log데이터 생성 */
-					///////////////////////////////////////////////////////////////////////////////////////
-					/*!여기서 문자가 발송되어야하는데 자꾸 멈춤. 수정해야함*/
-					SendMessageLMS.sendSMS(log); /*신고 메시지 발송*/
-					///////////////////////////////////////////////////////////////////////////////////////
-					logDAO.store(log);	// 신고 로그 생성
+
+					logDAO.store(log); // 신고 로그 생성
 					System.out.println("로그 생성"); // 신고 로그 생성
-					
+					SendMessageLMS.sendLMS(log); /* 신고 메시지 발송 */
+
 					emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제
 					reportStatus.put(id, 1); // 신고가 되었으므로 신고현황 해쉬에 추가
 					new java.util.Timer().schedule(new java.util.TimerTask() {
@@ -263,7 +256,10 @@ public class Subscriber implements MqttCallback {
 							}
 						}
 					}, 10000 /* 1시간(3,600,000)이 경과하면 해당 해쉬데이터 삭제, 1,000당 1초 */);
-					/*타이머로 1시간 뒤에 신고현황에서 해당 id 지우는 이유는 1시간이 지나도 생체데이터의 변화가 없으면 구조가 되지 않은 것으로 판단하고 재신고를 하기 위해서임*/
+					/*
+					 * 타이머로 1시간 뒤에 신고현황에서 해당 id 지우는 이유는 1시간이 지나도 생체데이터의 변화가 없으면 구조가 되지 않은 것으로 판단하고
+					 * 재신고를 하기 위해서임
+					 */
 				}
 			}
 

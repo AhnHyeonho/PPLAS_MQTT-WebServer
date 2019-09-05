@@ -14,7 +14,7 @@ public class LogSearchServlet extends HttpServlet {
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html);charset=UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
 		String acID = request.getParameter("acID");
 		System.out.println("데이터 가져오는중");
 		if(acID == null || acID.equals("")) {
@@ -25,5 +25,4 @@ public class LogSearchServlet extends HttpServlet {
 			response.getWriter().write(String.format("{\"pulse\": %s, \"temp\": %s}", pulse, temp));
 		}
 	}
-
 }

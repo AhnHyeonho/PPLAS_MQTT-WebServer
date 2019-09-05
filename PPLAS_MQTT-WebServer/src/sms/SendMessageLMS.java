@@ -12,18 +12,19 @@ import log.Log;
 
 public class SendMessageLMS {
 	
-    public static void sendSMS(Log log) {
+    public static void sendLMS(Log log) { 	
     	/*수신번호, 발신번호, 내용, 제목 순*/
     	Message message = new Message("01031232396", "01031232396", "※응급환자발생※\n" + 
         		"이름:"
-        		+ log.getAccountInfo().getAccountName() + "\n" + 
+        		+ log.getAccountInfo().getAccountName().toString() + "\n" + 
         		"맥박:"
-        		+ log.getPulse() + "\n" + 
+        		+ log.getPulse().toString() + "\n" + 
         		"체온:"
-        		+ log.getTemp() + "℃\n" + 
+        		+ log.getTemp().toString() + "℃\n" + 
         		"발생위치:"
-        		+ log.getLatitude() + ", " + log.getLongtitude() +"\n\n" + 
+        		+ log.getLatitude().toString() + ", " + log.getLongtitude().toString() +"\n\n" + 
         		"- from 구해줘 -", "PPLAS");
+    	
         Call<MessageModel> api = APIInit.getAPI().sendMessage(APIInit.getHeaders(), message);
         api.enqueue(new Callback<MessageModel>() {
             @Override
