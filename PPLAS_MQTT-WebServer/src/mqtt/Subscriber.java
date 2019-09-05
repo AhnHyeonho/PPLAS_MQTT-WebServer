@@ -223,6 +223,8 @@ public class Subscriber implements MqttCallback {
 				}, 10000 /* 1분(60,000)이 경과하면 해당 해쉬데이터 삭제, 1,000당 1초 */);
 			}
 
+			/*20190906-02:34 현재 문자 발송까지는 구현. 응급상황 판단 과정과 신고중복 판단 과정을 분리해야할 것 같음. */
+			
 			if (emergencyJudgment.get(id) >= 5) {
 				// 응급상황 알고리즘 : 응급상황이 지속되면 count가 쌓이다가 5번정도 지속이 되면 log 정보를 기록하고 구조대에게 publish 한다
 				// 응급상황일 경우 데이터베이스에 로그정보를 저장한다
@@ -241,23 +243,12 @@ public class Subscriber implements MqttCallback {
 					log.setLongtitude(longitude);
 
 					LogDAO logDAO = new LogDAO(); /* 해당 정보로 log데이터 생성 */
-<<<<<<< HEAD
 					logDAO.store(log); // 신고 로그 생성
-					System.out.println("gg");
+					System.out.println("로그 생성"); // 신고 로그 생성
 					///////////////////////////////////////////////////////////////////////////////////////
 					/* !여기서 문자가 발송되어야하는데 자꾸 멈춤. 수정해야함 */
-					SendMessageLMS sendLms = new SendMessageLMS(log); /* 신고 메시지 발송 */
-					sendLms.sendSMS();
+					SendMessageLMS.sendLMS(log, hospitalList.get(NearestHospitalIndex).getHospitalName());/* 신고 메시지 발송 */
 					///////////////////////////////////////////////////////////////////////////////////////
-
-					System.out.println("로그 생성"); // 신고 로그 생성
-=======
-
-					logDAO.store(log); // 신고 로그 생성
-					System.out.println("로그 생성"); // 신고 로그 생성
-					SendMessageLMS.sendLMS(log); /* 신고 메시지 발송 */
->>>>>>> master
-
 					emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제
 					reportStatus.put(id, 1); // 신고가 되었으므로 신고현황 해쉬에 추가
 					new java.util.Timer().schedule(new java.util.TimerTask() {
