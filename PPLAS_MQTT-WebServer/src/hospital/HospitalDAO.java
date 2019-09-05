@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import location.Location;
+import setting.Setting;
 
 public class HospitalDAO {
 	private Connection conn;
@@ -15,9 +16,9 @@ public class HospitalDAO {
 	
 	public HospitalDAO() {
 		try {
-			String dbURL = "jdbc:mysql://localhost:3306/pplas";
-			String dbID = "root";
-			String dbPassword = "1234";
+			String dbURL = Setting.dbURL;
+			String dbID = Setting.dbID;
+			String dbPassword = Setting.dbPassword;
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			

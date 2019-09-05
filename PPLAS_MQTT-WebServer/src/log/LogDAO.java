@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import hospital.Hospital;
 import location.Location;
+import setting.Setting;
 import account.Account;
 import account.AccountDAO;
 
@@ -19,9 +20,9 @@ public class LogDAO {
 
 	public LogDAO() {
 		try {
-			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
-			String dbID = "root";
-			String dbPassword = "1234";
+			String dbURL = Setting.dbURL;
+			String dbID = Setting.dbID;
+			String dbPassword = Setting.dbPassword;
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 
@@ -99,11 +100,11 @@ public class LogDAO {
 			if (rs.next()) {
 				return rs.getInt(1) + 1;
 			}
-			return 1; // 첫 번째 게시물인 경우
+			return 1; // 泥� 踰덉㎏ 寃뚯떆臾쇱씤 寃쎌슦
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // 데이터베이스 오류
+		return -1; // �뜲�씠�꽣踰좎씠�뒪 �삤瑜�
 	}
 
 	public ArrayList<Log> getList(int pageNumber) {

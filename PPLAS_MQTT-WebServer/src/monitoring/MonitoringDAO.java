@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import hospital.Hospital;
 import location.Location;
+import setting.Setting;
 import account.Account;
 import account.AccountDAO;
 
@@ -19,9 +20,9 @@ public class MonitoringDAO {
 
 	public MonitoringDAO() {
 		try {
-			String dbURL = "jdbc:mysql://localhost:3306/pplas?useSSL=false";
-			String dbID = "root";
-			String dbPassword = "1234";
+			String dbURL = Setting.dbURL;
+			String dbID = Setting.dbID;
+			String dbPassword = Setting.dbPassword;
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 

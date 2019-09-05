@@ -177,7 +177,7 @@ public class Subscriber implements MqttCallback {
 		int NearestHospitalIndex = 0;
 
 		String topicSplit[] = topic.split("/"); // user/patient/id 에서 id를 짜름
-		String id = topicSplit[2]; // account id저장
+		final String id = topicSplit[2]; // account id저장
 		account = acDAO.getInfo(id); // account테이블로부터 해당 id로 account객체 리딩
 		String arr[] = message.toString().split("%"); // 메시지 분리
 		String pulse = arr[0]; // 맥박 저장
