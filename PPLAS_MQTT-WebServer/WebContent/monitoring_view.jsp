@@ -119,8 +119,8 @@
 			</div>
 		</div>
 	</div>
-	
-<script type="text/javascript">	
+
+	<script type="text/javascript">	
 function deleteline(){
 	if(myChart.data.datasets[0].data.length > 10 && myChart.data.datasets[1].data.length > 10){
 		
@@ -130,87 +130,85 @@ function deleteline(){
 		myChart.data.labels.shift();
 	}
 }	
-</script>	
-	
+</script>
+
 	<script type="text/javascript">
   						
 	
 function searchFunction() {
   	var acID = "<%=acID%>";
-					$.ajax({
-						type : "POST",
-						dataType : "json",
-						url : "/PPLAS_MQTT-WebServer/checkSearchServlet",
-						data : {
-							"acID" : acID
-						},
-						success : function(data) {
+			$.ajax({
+				type : "POST",
+				dataType : "json",
+				url : "/PPLAS_MQTT-WebServer/checkSearchServlet",
+				data : {
+					"acID" : acID
+				},
+				success : function(data) {
 
-							now = new Date();
+					now = new Date();
 
-							myChart.data.labels.push(now.getHours()
-									+ ":"
-									+ (now.getMinutes() < 10 ? '0' : '')
-									+ now.getMinutes()
-									+ ":"
-									+ (now.getSeconds() < 10 ? '0' : '')
-											+ now.getSeconds());
-							myChart.data.datasets[0].data.push(data.pulse);
-							myChart.data.datasets[1].data.push(data.temp);
-							deleteline();
-							myChart.update();
-						},
-						error : function(error) {
-							console.log("error");
-						}
-					});
-
+					myChart.data.labels.push(now.getHours() + ":"
+							+ (now.getMinutes() < 10 ? '0' : '')
+							+ now.getMinutes() + ":"
+							+ (now.getSeconds() < 10 ? '0' : '')
+							+ now.getSeconds());
+					myChart.data.datasets[0].data.push(data.pulse);
+					myChart.data.datasets[1].data.push(data.temp);
+					deleteline();
+					myChart.update();
+				},
+				error : function(error) {
+					console.log("error");
 				}
+			});
 
-				// create initial empty chart
-				var ctx_live = document.getElementById("mycanvas");
-				var myChart = new Chart(ctx_live, {
-					type : 'line',
-					data : {
-						labels : [],
-						datasets : [ {
-							data : [],
-							fill : false,
-							borderWidth : 1,
-							borderColor : '#00c0ef',
-							label : "맥박",
-						}, {
-							data : [],
-							lineTension : 0,
-							borderColor : '#FF5E00',
-							label : "체온"
-						} ]
-					},
-					options : {
-						responsive : true,
-						legend : {
-							display : true
-						},
-						scales : {
-							yAxes : [ {
-								gridLines : false,
-								ticks : {
-									beginAtZero : true,
-								}
-							} ]
+		}
+
+		// create initial empty chart
+		var ctx_live = document.getElementById("mycanvas");
+		var myChart = new Chart(ctx_live, {
+			type : 'line',
+			data : {
+				labels : [],
+				datasets : [ {
+					data : [],
+					fill : false,
+					borderWidth : 1,
+					borderColor : '#00c0ef',
+					label : "맥박",
+				}, {
+					data : [],
+					lineTension : 0,
+					borderColor : '#FF5E00',
+					label : "체온"
+				} ]
+			},
+			options : {
+				responsive : true,
+				legend : {
+					display : true
+				},
+				scales : {
+					yAxes : [ {
+						gridLines : false,
+						ticks : {
+							beginAtZero : true,
 						}
-					}
-				});
+					} ]
+				}
+			}
+		});
 
+		var func = setInterval(searchFunction, 2000);
 
-				var func = setInterval(searchFunction, 2000);
-
-function view_monitoring() {
-	clearInterval(func);
-	location.href = 'monitoring.jsp';
-}
-			</script>
-	<button class="btn btn-success btn-arrow-left" onclick="view_monitoring();">목록</button>
+		function view_monitoring() {
+			clearInterval(func);
+			location.href = 'monitoring.jsp';
+		}
+	</script>
+	<button class="btn btn-success btn-arrow-left"
+		onclick="view_monitoring();">목록</button>
 
 	<script
 		src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
