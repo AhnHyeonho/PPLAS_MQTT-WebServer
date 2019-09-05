@@ -13,10 +13,9 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import account.Account;
 import account.AccountDAO;
-import location.Location;
 import log.Log;
 import log.LogDAO;
-import sms.SendSMS;
+import sms.SendMessageLMS;
 import distance.LocationDistance;
 import hospital.Hospital;
 import hospital.HospitalDAO;
@@ -245,11 +244,14 @@ public class Subscriber implements MqttCallback {
 					log.setTemp(temp);
 					log.setLatitude(latitude);
 					log.setLongtitude(longitude);
-
-					LogDAO logDAO = new LogDAO();
+					LogDAO logDAO = new LogDAO(); /* 해당 정보로 log데이터 생성 */
+					///////////////////////////////////////////////////////////////////////////////////////
+					/*!여기서 문자가 발송되어야하는데 자꾸 멈춤. 수정해야함*/
+					SendMessageLMS.sendSMS(log); /*신고 메시지 발송*/
+					///////////////////////////////////////////////////////////////////////////////////////
 					logDAO.store(log);	// 신고 로그 생성
 					System.out.println("로그 생성"); // 신고 로그 생성
-					/*신고 메시지 발송*/
+					
 					emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제
 					reportStatus.put(id, 1); // 신고가 되었으므로 신고현황 해쉬에 추가
 					new java.util.Timer().schedule(new java.util.TimerTask() {
