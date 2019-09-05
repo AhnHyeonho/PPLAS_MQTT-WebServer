@@ -16,6 +16,7 @@ import account.AccountDAO;
 import location.Location;
 import log.Log;
 import log.LogDAO;
+import sms.SendSMS;
 import distance.LocationDistance;
 import hospital.Hospital;
 import hospital.HospitalDAO;
@@ -39,6 +40,7 @@ public class Subscriber implements MqttCallback {
 	private int count;//////////////////////////////////////////////////////////
 	private Publisher publisher;
 	private HashMap<String, Integer> emergencyJudgment;
+	private HashMap<String, Integer> reportStatus;
 
 	public String getBrokerUrl() {
 		return brokerUrl;
@@ -66,7 +68,9 @@ public class Subscriber implements MqttCallback {
 
 	public Subscriber() {
 		super();
-		emergencyJudgment = new HashMap<String, Integer>(); // 해쉬맵 생성
+		emergencyJudgment = new HashMap<String, Integer>(); // 응급상황판단 해쉬맵 생성
+		reportStatus = new HashMap<String, Integer>(); // 신고현황 해쉬맵 생성
+		count = 0; //////////////////////////////////////////////////////////
 	} // default constructor
 
 	public Subscriber(String brokerUrl, String clientId, String topic) {
@@ -74,7 +78,8 @@ public class Subscriber implements MqttCallback {
 		this.brokerUrl = "tcp://" + brokerUrl + ":1883";
 		this.clientId = clientId;
 		this.topic = topic;
-		emergencyJudgment = new HashMap<String, Integer>(); // 해쉬맵 생성
+		emergencyJudgment = new HashMap<String, Integer>(); // 응급상황판단 해쉬맵 생성
+		reportStatus = new HashMap<String, Integer>(); // 신고현황 해쉬맵 생성
 		count = 0; //////////////////////////////////////////////////////////
 	}
 
@@ -190,15 +195,13 @@ public class Subscriber implements MqttCallback {
 
 		///////////////////////////////////// 확인을 위한 출력 문구
 		///////////////////////////////////// /////////////////////////////////////////////
-		System.out.println("Mqtt topic : " + id);
+		System.out.println("Mqtt topic : " + topic);
 		System.out.println("Mqtt msg : " + message.toString());
-		System.out.println(topicSplit[2]);
-		System.out.println(arr[0]);
-		System.out.println(arr[1]);
-		System.out.println(arr[2]);
-		System.out.println(locationArr[0]);
-		System.out.println(locationArr[1]);
-		System.out.println(NearestHospitalIndex);
+		/*
+		 * System.out.println(topicSplit[2]); System.out.println(arr[0]);
+		 * System.out.println(arr[1]); System.out.println(arr[2]);
+		 * System.out.println(locationArr[0]); System.out.println(locationArr[1]);
+		 */
 		System.out.println("가장 가까운 병원 : " + hospitalList.get(NearestHospitalIndex).getHospitalName());
 		// 환자의 정보와 가장 가까운 병원의 위치 정보까지 알아냄
 		//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,30 +222,47 @@ public class Subscriber implements MqttCallback {
 					@Override
 					public void run() {
 						if (emergencyJudgment.containsKey(id)) {
-							/*만약 로그가 생성되어 해당 해쉬가 삭제되었을 수도 있기 때문에*/
+							/* 만약 로그가 생성되어 해당 해쉬가 삭제되었을 수도 있기 때문에 */
 							emergencyJudgment.remove(id);
 						}
 					}
-				}, 10000 /* 1분이 경과하면 해당 해쉬데이터 삭제, 1000당 1초 */);
+				}, 10000 /* 1분(60,000)이 경과하면 해당 해쉬데이터 삭제, 1,000당 1초 */);
 			}
 
 			if (emergencyJudgment.get(id) >= 5) {
 				// 응급상황 알고리즘 : 응급상황이 지속되면 count가 쌓이다가 5번정도 지속이 되면 log 정보를 기록하고 구조대에게 publish 한다
 				// 응급상황일 경우 데이터베이스에 로그정보를 저장한다
 
-				Log log = new Log();
+				if (reportStatus.containsKey(id)) {
+					/* 만약 해당 id로 신고가 되어있으면 */
+					/* 아무것도 하지 않는다. */
+				} else {
+					/* 해당 id로 신고가 되어있지 않으면 */
+					Log log = new Log();
 
-				log.setAccountInfo(account);
-				log.setPulse(pulse);
-				log.setTemp(temp);
-				log.setLatitude(latitude);
-				log.setLongtitude(longitude);
+					log.setAccountInfo(account);
+					log.setPulse(pulse);
+					log.setTemp(temp);
+					log.setLatitude(latitude);
+					log.setLongtitude(longitude);
 
-				LogDAO logDAO = new LogDAO();
-				logDAO.store(log);
-
-				System.out.println("로그 생성");
-				emergencyJudgment.remove(id);
+					LogDAO logDAO = new LogDAO();
+					logDAO.store(log);	// 신고 로그 생성
+					System.out.println("로그 생성"); // 신고 로그 생성
+					/*신고 메시지 발송*/
+					emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제
+					reportStatus.put(id, 1); // 신고가 되었으므로 신고현황 해쉬에 추가
+					new java.util.Timer().schedule(new java.util.TimerTask() {
+						@Override
+						public void run() {
+							if (reportStatus.containsKey(id)) {
+								/* 해당 id의 신고현황 해쉬데이터를 1시간이 지나면 삭제. 1시간이 지나도 생체신호의 변화가 없다면 재신고를 위한 삭제임 */
+								reportStatus.remove(id);
+							}
+						}
+					}, 10000 /* 1시간(3,600,000)이 경과하면 해당 해쉬데이터 삭제, 1,000당 1초 */);
+					/*타이머로 1시간 뒤에 신고현황에서 해당 id 지우는 이유는 1시간이 지나도 생체데이터의 변화가 없으면 구조가 되지 않은 것으로 판단하고 재신고를 하기 위해서임*/
+				}
 			}
 
 		} else {
