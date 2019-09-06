@@ -16,7 +16,7 @@ public class ConnectDB {
 	public static ConnectDB getInstance() {
 		return instance;
 	}
-	
+
 	private String jdbcUrl = Setting.dbURL; // MySQL 계정 "jdbc:mysql://localhost:3306/DB이름"
 	private String dbID = Setting.dbID; // MySQL 계정 "로컬일 경우 root"
 	private String dbPW = Setting.dbPassword; // 비밀번호 "mysql 설치 시 설정한 비밀번호"
