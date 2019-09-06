@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import setting.Setting;
+
 public class ConnectDB {
 	public ConnectDB() {};
 	
@@ -15,9 +17,9 @@ public class ConnectDB {
 		return instance;
 	}
 	
-	private String jdbcUrl = "jdbc:mysql://localhost:3306/pplas?characterEncoding=UTF-8&serverTimezone=UTC"; // MySQL 계정 "jdbc:mysql://localhost:3306/DB이름"
-	private String dbID = "root"; // MySQL 계정 "로컬일 경우 root"
-	private String dbPW = "1234"; // 비밀번호 "mysql 설치 시 설정한 비밀번호"
+	private String jdbcUrl = Setting.dbURL; // MySQL 계정 "jdbc:mysql://localhost:3306/DB이름"
+	private String dbID = Setting.dbID; // MySQL 계정 "로컬일 경우 root"
+	private String dbPW = Setting.dbPassword; // 비밀번호 "mysql 설치 시 설정한 비밀번호"
 	
 	private Connection conn = null;
 	private PreparedStatement pstmt = null;
