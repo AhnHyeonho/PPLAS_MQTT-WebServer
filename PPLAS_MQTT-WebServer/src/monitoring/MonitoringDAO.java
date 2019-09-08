@@ -31,16 +31,16 @@ public class MonitoringDAO {
 		}
 	}
 
-	public int store(String accountID, String latitude, String longtitude, String pulse, String temp) {
+	public int store(Monitoring monitoring) {
 		String SQL = "INSERT INTO MONITORING VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, getNext());
-			pstmt.setString(2, accountID);
-			pstmt.setString(3, latitude);
-			pstmt.setString(4, longtitude);
-			pstmt.setString(5, pulse);
-			pstmt.setString(6, temp);
+			pstmt.setString(2, monitoring.getAccountInfo().getAccountID());
+			pstmt.setString(3, monitoring.getLatitude());
+			pstmt.setString(4, monitoring.getLongtitude());
+			pstmt.setString(5, monitoring.getPulse());
+			pstmt.setString(6, monitoring.getTemp());
 			pstmt.setString(7, getDate());
 			return pstmt.executeUpdate();
 
