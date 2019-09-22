@@ -202,8 +202,7 @@ public class Subscriber implements MqttCallback {
 		// 환자의 정보와 가장 가까운 병원의 위치 정보까지 알아냄
 		//////////////////////////////////////////////////////////////////////////////////////////////////
 
-		if ((Float.parseFloat(temp) > 38 || Float.parseFloat(temp) < 36)
-				|| (Float.parseFloat(pulse) < 60 || Float.parseFloat(pulse) > 100)) {
+		if (Float.parseFloat(temp) > 38 || Float.parseFloat(pulse) > 90) {
 			// 이상 증상으로 예상되는 mqtt 메시지 도착
 
 			/* 해당 id로 신고가 되어있지 않으면 */
@@ -228,16 +227,17 @@ public class Subscriber implements MqttCallback {
 				// 해당 토픽의 데이터가 해쉬맵에 없다면
 				emergencyJudgment.put(id, 1); // 해당 토픽으로 데이터 생성
 				System.out.println(topic + " 환자(신규) :" + emergencyJudgment.get(id));
-				if (emergencyJudgment.containsKey(id) && !(reportStatus.containsKey(id))) { /* 만약 로그가 생성되어 해당 해쉬가 삭제되었을 수도 있기 때문에 */
-					//if문을 밖으로 빼줘서 TimerTask 생성 하지 못하게 함
+				
 					new java.util.Timer().schedule(new java.util.TimerTask() {
 						@Override
 						public void run() {
+							if (emergencyJudgment.containsKey(id) && !(reportStatus.containsKey(id))) { /* 만약 로그가 생성되어 해당 해쉬가 삭제되었을 수도 있기 때문에 */
 								emergencyJudgment.remove(id);
+							}
 						}
 					}, 10000 /* 5분(300,000)이 경과하면 해당 해쉬데이터 삭제, 1,000당 1초 */);
 				}
-			}
+			
 
 			/* 20190906-02:34 현재 문자 발송까지는 구현. 응급상황 판단 과정과 신고중복 판단 과정을 분리해야할 것 같음. */
 
@@ -268,18 +268,19 @@ public class Subscriber implements MqttCallback {
 					// emergencyJudgment.remove(id); // 신고가 되었으므로 응급판단 해쉬에서는 삭제 ---여기 삭제해도될듯..?
 					reportStatus.put(id, 1); // 신고가 되었으므로 신고현황 해쉬에 추가
 
-					if (reportStatus.containsKey(id)) { // containsKey 함수를 run() 함수 안에 넣으면 TimerTask가 계속 생기기 때문에 if문을
-														// 밖으로 빼서 TimerTask를 생성하지 못하도록 함
+
 						/* 해당 id의 신고현황 해쉬데이터를 1시간이 지나면 삭제. 1시간이 지나도 생체신호의 변화가 없다면 재신고를 위한 삭제임 */
 						new java.util.Timer().schedule(new java.util.TimerTask() {
 							@Override
 							public void run() {
-
-								reportStatus.remove(id); // 신고현황 해쉬에서 삭제
-								emergencyJudgment.remove(id); // 응급판단 해쉬에서 삭제
+								if (reportStatus.containsKey(id)) { // containsKey 함수를 run() 함수 안에 넣으면 TimerTask가 계속 생기기 때문에 if문을
+									// 밖으로 빼서 TimerTask를 생성하지 못하도록 함
+									reportStatus.remove(id); // 신고현황 해쉬에서 삭제
+									emergencyJudgment.remove(id); // 응급판단 해쉬에서 삭제
+								}
 							}
 						}, 10000 /* 1시간(3,600,000)이 경과하면 해당 해쉬데이터 삭제, 1,000당 1초 */);
-					}
+					
 					/*
 					 * 타이머로 1시간 뒤에 신고현황에서 해당 id 지우는 이유는 1시간이 지나도 생체데이터의 변화가 없으면 구조가 되지 않은 것으로 판단하고
 					 * 재신고를 하기 위해서임

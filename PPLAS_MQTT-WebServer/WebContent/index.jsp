@@ -10,12 +10,12 @@
 </head>
 <body>
 	<%
-		Subscriber sb = new Subscriber("116.126.97.126", "server", "user/#"); /* 브로커 아이피, 브로커 이름, subscribe할 topic 순으로 입력 */
+		//Subscriber sb = new Subscriber("116.126.97.126", "server", "user/#"); /* 브로커 아이피, 브로커 이름, subscribe할 topic 순으로 입력 */
 		/*
 		*116.126.97.126 현호 브로커 IP
 		*113.198.84.52 승환 브로커 IP
 		*/
-		sb.subscribe();
+		//sb.subscribe();
 	%>
 	<script>
 		location.href = 'main.jsp';
