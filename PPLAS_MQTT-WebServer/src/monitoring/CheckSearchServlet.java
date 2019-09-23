@@ -16,7 +16,6 @@ public class CheckSearchServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html);charset=UTF-8");
 		String acID = request.getParameter("acID");
-		System.out.println("데이터 가져오는중");
 		if(acID == null || acID.equals("")) {
 			response.getWriter().write("0");
 		} else {

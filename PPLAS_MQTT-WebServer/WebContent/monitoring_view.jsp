@@ -154,7 +154,7 @@ function searchFunction() {
 							+ (now.getSeconds() < 10 ? '0' : '')
 							+ now.getSeconds());
 					myChart.data.datasets[0].data.push(data.pulse);
-					myChart.data.datasets[1].data.push(data.temp);
+					myChart.data.datasets[1].data.push(data.temp+3);
 					deleteline();
 					myChart.update();
 				},

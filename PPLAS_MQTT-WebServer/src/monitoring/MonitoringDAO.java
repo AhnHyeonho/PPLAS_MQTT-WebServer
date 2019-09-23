@@ -41,7 +41,8 @@ public class MonitoringDAO {
 			pstmt.setString(4, monitoring.getLongtitude());
 			pstmt.setString(5, monitoring.getPulse());
 			pstmt.setString(6, monitoring.getTemp());
-			pstmt.setString(7, getDate());
+			pstmt.setString(7, getDate().trim());
+			System.out.println(getDate());
 			return pstmt.executeUpdate();
 
 		} catch (Exception e) {

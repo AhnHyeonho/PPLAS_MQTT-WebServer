@@ -182,11 +182,20 @@ public class Subscriber implements MqttCallback {
 		account = acDAO.getInfo(id); // account테이블로부터 해당 id로 account객체 리딩
 		String arr[] = message.toString().split("%"); // 메시지 분리
 		String pulse = arr[0]; // 맥박 저장
+		pulse = pulse.trim();
+		if(pulse.equals("00"))
+		{
+			pulse = "0";
+		}
+		System.out.println(pulse);
 		String temp = arr[1]; // 체온 저장
+		temp = temp.trim();
+		
 		String locationArr[] = arr[2].split(":"); // 위도, 경도 분리
 		String latitude = locationArr[0]; // 위도(latitude) 저장
+		latitude = latitude.trim();
 		String longitude = locationArr[1]; // 경도(longitude) 저장
-
+		longitude = longitude.trim();
 		NearestHospitalIndex = findNearestHospital(hospitalDAO, hospitalList, latitude, longitude); // 가장 가까운 병원 결정
 
 		///////////////////////////////////// 확인을 위한 출력 문구
@@ -202,7 +211,7 @@ public class Subscriber implements MqttCallback {
 		// 환자의 정보와 가장 가까운 병원의 위치 정보까지 알아냄
 		//////////////////////////////////////////////////////////////////////////////////////////////////
 
-		if (Float.parseFloat(temp) > 38 || Float.parseFloat(pulse) > 90) {
+		if (Float.parseFloat(temp) > 35 || Float.parseFloat(pulse) > 90) {
 			// 이상 증상으로 예상되는 mqtt 메시지 도착
 
 			/* 해당 id로 신고가 되어있지 않으면 */
